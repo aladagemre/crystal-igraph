@@ -13,3 +13,9 @@ puts g.to
 puts g.from
 puts g.oi
 
+v = IGraph::VectorT.new
+result = 0
+#igraph_diameter(&g, &result, 0, 0, 0, IGRAPH_UNDIRECTED, 1);
+IGraph.diameter(pointerof(g), pointerof(result), nil, nil, nil, 0, 1)
+
+puts result

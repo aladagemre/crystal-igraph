@@ -1,6 +1,5 @@
 @[Link("igraph")]
 @[Link("glpk")]
-@[Link("stdarg")]
 @[Link("c++")]
 lib IGraph
   VS_ALL = 0
@@ -97,7 +96,7 @@ lib IGraph
   fun error = igraph_error(reason : LibC::Char*, file : LibC::Char*, line : LibC::Int, errno : LibC::Int) : LibC::Int
   fun errorf = igraph_errorf(reason : LibC::Char*, file : LibC::Char*, line : LibC::Int, errno : LibC::Int, ...) : LibC::Int
   fun errorvf = igraph_errorvf(reason : LibC::Char*, file : LibC::Char*, line : LibC::Int, errno : LibC::Int, ap : VaList) : LibC::Int
-  alias VaList = LibC::VaList
+  alias VaList = UInt8[24]
   fun strerror = igraph_strerror(errno : LibC::Int) : LibC::Char*
   struct IProtectedptr
     all : LibC::Int
@@ -1762,10 +1761,10 @@ lib IGraph
   fun sparsemat_print = igraph_sparsemat_print(a : SparsematT*, outstream : File*) : LibC::Int
   fun sparsemat_eye = igraph_sparsemat_eye(a : SparsematT*, n : LibC::Int, nzmax : LibC::Int, value : RealT, compress : BoolT) : LibC::Int
   fun sparsemat_diag = igraph_sparsemat_diag(a : SparsematT*, nzmax : LibC::Int, values : VectorT*, compress : BoolT) : LibC::Int
-  fun sparsemat = igraph_sparsemat(graph : T*, a : SparsematT*, directed : BoolT) : LibC::Int
+  fun sparsemat = igraph_sparsemat(graph : S*, a : SparsematT*, directed : BoolT) : LibC::Int
   type T = S
-  fun weighted_sparsemat = igraph_weighted_sparsemat(graph : T*, a : SparsematT*, directed : BoolT, attr : LibC::Char*, loops : BoolT) : LibC::Int
-  fun get_sparsemat = igraph_get_sparsemat(graph : T*, res : SparsematT*) : LibC::Int
+  fun weighted_sparsemat = igraph_weighted_sparsemat(graph : S*, a : SparsematT*, directed : BoolT, attr : LibC::Char*, loops : BoolT) : LibC::Int
+  fun get_sparsemat = igraph_get_sparsemat(graph : S*, res : SparsematT*) : LibC::Int
   fun matrix_as_sparsemat = igraph_matrix_as_sparsemat(res : SparsematT*, mat : MatrixT*, tol : RealT) : LibC::Int
   fun sparsemat_as_matrix = igraph_sparsemat_as_matrix(res : MatrixT*, spmat : SparsematT*) : LibC::Int
   SparsematSolveLu = 0
@@ -1957,8 +1956,8 @@ lib IGraph
   fun vs_destroy = igraph_vs_destroy(vs : VsT*)
   fun vs_is_all = igraph_vs_is_all(vs : VsT*) : BoolT
   fun vs_copy = igraph_vs_copy(dest : VsT*, src : VsT*) : LibC::Int
-  fun vs_as_vector = igraph_vs_as_vector(graph : T*, vs : VsT, v : VectorT*) : LibC::Int
-  fun vs_size = igraph_vs_size(graph : T*, vs : VsT*, result : IntegerT*) : LibC::Int
+  fun vs_as_vector = igraph_vs_as_vector(graph : S*, vs : VsT, v : VectorT*) : LibC::Int
+  fun vs_size = igraph_vs_size(graph : S*, vs : VsT*, result : IntegerT*) : LibC::Int
   fun vs_type = igraph_vs_type(vs : VsT*) : LibC::Int
   struct VitT
     type : LibC::Int
@@ -1967,7 +1966,7 @@ lib IGraph
     _end : LibC::Long
     vec : VectorT*
   end
-  fun vit_create = igraph_vit_create(graph : T*, vs : VsT, vit : VitT*) : LibC::Int
+  fun vit_create = igraph_vit_create(graph : S*, vs : VsT, vit : VitT*) : LibC::Int
   fun vit_destroy = igraph_vit_destroy(vit : VitT*)
   fun vit_as_vector = igraph_vit_as_vector(vit : VitT*, v : VectorT*) : LibC::Int
   struct EsT
@@ -2021,8 +2020,8 @@ lib IGraph
   fun es_destroy = igraph_es_destroy(es : EsT*)
   fun es_is_all = igraph_es_is_all(es : EsT*) : BoolT
   fun es_copy = igraph_es_copy(dest : EsT*, src : EsT*) : LibC::Int
-  fun es_as_vector = igraph_es_as_vector(graph : T*, es : EsT, v : VectorT*) : LibC::Int
-  fun es_size = igraph_es_size(graph : T*, es : EsT*, result : IntegerT*) : LibC::Int
+  fun es_as_vector = igraph_es_as_vector(graph : S*, es : EsT, v : VectorT*) : LibC::Int
+  fun es_size = igraph_es_size(graph : S*, es : EsT*, result : IntegerT*) : LibC::Int
   fun es_type = igraph_es_type(es : EsT*) : LibC::Int
   struct EitT
     type : LibC::Int
@@ -2031,33 +2030,33 @@ lib IGraph
     _end : LibC::Long
     vec : VectorT*
   end
-  fun eit_create = igraph_eit_create(graph : T*, es : EsT, eit : EitT*) : LibC::Int
+  fun eit_create = igraph_eit_create(graph : S*, es : EsT, eit : EitT*) : LibC::Int
   fun eit_destroy = igraph_eit_destroy(eit : EitT*)
   fun eit_as_vector = igraph_eit_as_vector(eit : EitT*, v : VectorT*) : LibC::Int
-  fun empty = igraph_empty(graph : T*, n : IntegerT, directed : BoolT) : LibC::Int
-  fun empty_attrs = igraph_empty_attrs(graph : T*, n : IntegerT, directed : BoolT, attr : Void*) : LibC::Int
-  fun destroy = igraph_destroy(graph : T*) : LibC::Int
-  fun copy = igraph_copy(to : T*, from : T*) : LibC::Int
-  fun add_edges = igraph_add_edges(graph : T*, edges : VectorT*, attr : Void*) : LibC::Int
-  fun add_vertices = igraph_add_vertices(graph : T*, nv : IntegerT, attr : Void*) : LibC::Int
-  fun delete_edges = igraph_delete_edges(graph : T*, edges : EsT) : LibC::Int
-  fun delete_vertices = igraph_delete_vertices(graph : T*, vertices : VsT) : LibC::Int
-  fun delete_vertices_idx = igraph_delete_vertices_idx(graph : T*, vertices : VsT, idx : VectorT*, invidx : VectorT*) : LibC::Int
-  fun vcount = igraph_vcount(graph : T*) : IntegerT
-  fun ecount = igraph_ecount(graph : T*) : IntegerT
-  fun neighbors = igraph_neighbors(graph : T*, neis : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
-  fun is_directed = igraph_is_directed(graph : T*) : BoolT
-  fun degree = igraph_degree(graph : T*, res : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun edge = igraph_edge(graph : T*, eid : IntegerT, from : IntegerT*, to : IntegerT*) : LibC::Int
-  fun edges = igraph_edges(graph : T*, eids : EsT, edges : VectorT*) : LibC::Int
-  fun get_eid = igraph_get_eid(graph : T*, eid : IntegerT*, from : IntegerT, to : IntegerT, directed : BoolT, error : BoolT) : LibC::Int
-  fun get_eids = igraph_get_eids(graph : T*, eids : VectorT*, pairs : VectorT*, path : VectorT*, directed : BoolT, error : BoolT) : LibC::Int
-  fun get_eids_multi = igraph_get_eids_multi(graph : T*, eids : VectorT*, pairs : VectorT*, path : VectorT*, directed : BoolT, error : BoolT) : LibC::Int
-  fun adjacent = igraph_adjacent(graph : T*, eids : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
-  fun incident = igraph_incident(graph : T*, eids : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
-  fun create = igraph_create(graph : T*, edges : VectorT*, n : IntegerT, directed : BoolT) : LibC::Int
-  fun small = igraph_small(graph : T*, n : IntegerT, directed : BoolT, ...) : LibC::Int
-  fun adjacency = igraph_adjacency(graph : T*, adjmatrix : MatrixT*, mode : AdjacencyT) : LibC::Int
+  fun empty = igraph_empty(graph : S*, n : IntegerT, directed : BoolT) : LibC::Int
+  fun empty_attrs = igraph_empty_attrs(graph : S*, n : IntegerT, directed : BoolT, attr : Void*) : LibC::Int
+  fun destroy = igraph_destroy(graph : S*) : LibC::Int
+  fun copy = igraph_copy(to : S*, from : S*) : LibC::Int
+  fun add_edges = igraph_add_edges(graph : S*, edges : VectorT*, attr : Void*) : LibC::Int
+  fun add_vertices = igraph_add_vertices(graph : S*, nv : IntegerT, attr : Void*) : LibC::Int
+  fun delete_edges = igraph_delete_edges(graph : S*, edges : EsT) : LibC::Int
+  fun delete_vertices = igraph_delete_vertices(graph : S*, vertices : VsT) : LibC::Int
+  fun delete_vertices_idx = igraph_delete_vertices_idx(graph : S*, vertices : VsT, idx : VectorT*, invidx : VectorT*) : LibC::Int
+  fun vcount = igraph_vcount(graph : S*) : IntegerT
+  fun ecount = igraph_ecount(graph : S*) : IntegerT
+  fun neighbors = igraph_neighbors(graph : S*, neis : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
+  fun is_directed = igraph_is_directed(graph : S*) : BoolT
+  fun degree = igraph_degree(graph : S*, res : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun edge = igraph_edge(graph : S*, eid : IntegerT, from : IntegerT*, to : IntegerT*) : LibC::Int
+  fun edges = igraph_edges(graph : S*, eids : EsT, edges : VectorT*) : LibC::Int
+  fun get_eid = igraph_get_eid(graph : S*, eid : IntegerT*, from : IntegerT, to : IntegerT, directed : BoolT, error : BoolT) : LibC::Int
+  fun get_eids = igraph_get_eids(graph : S*, eids : VectorT*, pairs : VectorT*, path : VectorT*, directed : BoolT, error : BoolT) : LibC::Int
+  fun get_eids_multi = igraph_get_eids_multi(graph : S*, eids : VectorT*, pairs : VectorT*, path : VectorT*, directed : BoolT, error : BoolT) : LibC::Int
+  fun adjacent = igraph_adjacent(graph : S*, eids : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
+  fun incident = igraph_incident(graph : S*, eids : VectorT*, vid : IntegerT, mode : NeimodeT) : LibC::Int
+  fun create = igraph_create(graph : S*, edges : VectorT*, n : IntegerT, directed : BoolT) : LibC::Int
+  fun small = igraph_small(graph : S*, n : IntegerT, directed : BoolT, ...) : LibC::Int
+  fun adjacency = igraph_adjacency(graph : S*, adjmatrix : MatrixT*, mode : AdjacencyT) : LibC::Int
   enum AdjacencyT
     AdjDirected = 0
     AdjUndirected = 1
@@ -2067,93 +2066,93 @@ lib IGraph
     AdjMin = 4
     AdjPlus = 5
   end
-  fun weighted_adjacency = igraph_weighted_adjacency(graph : T*, adjmatrix : MatrixT*, mode : AdjacencyT, attr : LibC::Char*, loops : BoolT) : LibC::Int
-  fun star = igraph_star(graph : T*, n : IntegerT, mode : StarModeT, center : IntegerT) : LibC::Int
+  fun weighted_adjacency = igraph_weighted_adjacency(graph : S*, adjmatrix : MatrixT*, mode : AdjacencyT, attr : LibC::Char*, loops : BoolT) : LibC::Int
+  fun star = igraph_star(graph : S*, n : IntegerT, mode : StarModeT, center : IntegerT) : LibC::Int
   enum StarModeT
     StarOut = 0
     StarIn = 1
     StarUndirected = 2
     StarMutual = 3
   end
-  fun lattice = igraph_lattice(graph : T*, dimvector : VectorT*, nei : IntegerT, directed : BoolT, mutual : BoolT, circular : BoolT) : LibC::Int
-  fun ring = igraph_ring(graph : T*, n : IntegerT, directed : BoolT, mutual : BoolT, circular : BoolT) : LibC::Int
-  fun tree = igraph_tree(graph : T*, n : IntegerT, children : IntegerT, type : TreeModeT) : LibC::Int
+  fun lattice = igraph_lattice(graph : S*, dimvector : VectorT*, nei : IntegerT, directed : BoolT, mutual : BoolT, circular : BoolT) : LibC::Int
+  fun ring = igraph_ring(graph : S*, n : IntegerT, directed : BoolT, mutual : BoolT, circular : BoolT) : LibC::Int
+  fun tree = igraph_tree(graph : S*, n : IntegerT, children : IntegerT, type : TreeModeT) : LibC::Int
   enum TreeModeT
     TreeOut = 0
     TreeIn = 1
     TreeUndirected = 2
   end
-  fun full = igraph_full(graph : T*, n : IntegerT, directed : BoolT, loops : BoolT) : LibC::Int
-  fun full_citation = igraph_full_citation(graph : T*, n : IntegerT, directed : BoolT) : LibC::Int
-  fun atlas = igraph_atlas(graph : T*, number : LibC::Int) : LibC::Int
-  fun extended_chordal_ring = igraph_extended_chordal_ring(graph : T*, nodes : IntegerT, w : MatrixT*) : LibC::Int
-  fun connect_neighborhood = igraph_connect_neighborhood(graph : T*, order : IntegerT, mode : NeimodeT) : LibC::Int
-  fun linegraph = igraph_linegraph(graph : T*, linegraph : T*) : LibC::Int
-  fun de_bruijn = igraph_de_bruijn(graph : T*, m : IntegerT, n : IntegerT) : LibC::Int
-  fun kautz = igraph_kautz(graph : T*, m : IntegerT, n : IntegerT) : LibC::Int
-  fun famous = igraph_famous(graph : T*, name : LibC::Char*) : LibC::Int
-  fun lcf_vector = igraph_lcf_vector(graph : T*, n : IntegerT, shifts : VectorT*, repeats : IntegerT) : LibC::Int
-  fun lcf = igraph_lcf(graph : T*, n : IntegerT, ...) : LibC::Int
-  fun barabasi_game = igraph_barabasi_game(graph : T*, n : IntegerT, power : RealT, m : IntegerT, outseq : VectorT*, outpref : BoolT, a : RealT, directed : BoolT, algo : BarabasiAlgorithmT, start_from : T*) : LibC::Int
+  fun full = igraph_full(graph : S*, n : IntegerT, directed : BoolT, loops : BoolT) : LibC::Int
+  fun full_citation = igraph_full_citation(graph : S*, n : IntegerT, directed : BoolT) : LibC::Int
+  fun atlas = igraph_atlas(graph : S*, number : LibC::Int) : LibC::Int
+  fun extended_chordal_ring = igraph_extended_chordal_ring(graph : S*, nodes : IntegerT, w : MatrixT*) : LibC::Int
+  fun connect_neighborhood = igraph_connect_neighborhood(graph : S*, order : IntegerT, mode : NeimodeT) : LibC::Int
+  fun linegraph = igraph_linegraph(graph : S*, linegraph : S*) : LibC::Int
+  fun de_bruijn = igraph_de_bruijn(graph : S*, m : IntegerT, n : IntegerT) : LibC::Int
+  fun kautz = igraph_kautz(graph : S*, m : IntegerT, n : IntegerT) : LibC::Int
+  fun famous = igraph_famous(graph : S*, name : LibC::Char*) : LibC::Int
+  fun lcf_vector = igraph_lcf_vector(graph : S*, n : IntegerT, shifts : VectorT*, repeats : IntegerT) : LibC::Int
+  fun lcf = igraph_lcf(graph : S*, n : IntegerT, ...) : LibC::Int
+  fun barabasi_game = igraph_barabasi_game(graph : S*, n : IntegerT, power : RealT, m : IntegerT, outseq : VectorT*, outpref : BoolT, a : RealT, directed : BoolT, algo : BarabasiAlgorithmT, start_from : S*) : LibC::Int
   enum BarabasiAlgorithmT
     BarabasiBag = 0
     BarabasiPsumtree = 1
     BarabasiPsumtreeMultiple = 2
   end
-  fun nonlinear_barabasi_game = igraph_nonlinear_barabasi_game(graph : T*, n : IntegerT, power : RealT, m : IntegerT, outseq : VectorT*, outpref : BoolT, zeroappeal : RealT, directed : BoolT) : LibC::Int
-  fun erdos_renyi_game = igraph_erdos_renyi_game(graph : T*, type : ErdosRenyiT, n : IntegerT, p : RealT, directed : BoolT, loops : BoolT) : LibC::Int
+  fun nonlinear_barabasi_game = igraph_nonlinear_barabasi_game(graph : S*, n : IntegerT, power : RealT, m : IntegerT, outseq : VectorT*, outpref : BoolT, zeroappeal : RealT, directed : BoolT) : LibC::Int
+  fun erdos_renyi_game = igraph_erdos_renyi_game(graph : S*, type : ErdosRenyiT, n : IntegerT, p : RealT, directed : BoolT, loops : BoolT) : LibC::Int
   enum ErdosRenyiT
     ErdosRenyiGnp = 0
     ErdosRenyiGnm = 1
   end
-  fun erdos_renyi_game_gnp = igraph_erdos_renyi_game_gnp(graph : T*, n : IntegerT, p : RealT, directed : BoolT, loops : BoolT) : LibC::Int
-  fun erdos_renyi_game_gnm = igraph_erdos_renyi_game_gnm(graph : T*, n : IntegerT, m : RealT, directed : BoolT, loops : BoolT) : LibC::Int
-  fun degree_sequence_game = igraph_degree_sequence_game(graph : T*, out_deg : VectorT*, in_deg : VectorT*, method : DegseqT) : LibC::Int
+  fun erdos_renyi_game_gnp = igraph_erdos_renyi_game_gnp(graph : S*, n : IntegerT, p : RealT, directed : BoolT, loops : BoolT) : LibC::Int
+  fun erdos_renyi_game_gnm = igraph_erdos_renyi_game_gnm(graph : S*, n : IntegerT, m : RealT, directed : BoolT, loops : BoolT) : LibC::Int
+  fun degree_sequence_game = igraph_degree_sequence_game(graph : S*, out_deg : VectorT*, in_deg : VectorT*, method : DegseqT) : LibC::Int
   enum DegseqT
     DegseqSimple = 0
     DegseqVl = 1
     DegseqSimpleNoMultiple = 2
   end
-  fun growing_random_game = igraph_growing_random_game(graph : T*, n : IntegerT, m : IntegerT, directed : BoolT, citation : BoolT) : LibC::Int
-  fun barabasi_aging_game = igraph_barabasi_aging_game(graph : T*, nodes : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, pa_exp : RealT, aging_exp : RealT, aging_bin : IntegerT, zero_deg_appeal : RealT, zero_age_appeal : RealT, deg_coef : RealT, age_coef : RealT, directed : BoolT) : LibC::Int
-  fun recent_degree_game = igraph_recent_degree_game(graph : T*, n : IntegerT, power : RealT, window : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, zero_appeal : RealT, directed : BoolT) : LibC::Int
-  fun recent_degree_aging_game = igraph_recent_degree_aging_game(graph : T*, nodes : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, pa_exp : RealT, aging_exp : RealT, aging_bin : IntegerT, window : IntegerT, zero_appeal : RealT, directed : BoolT) : LibC::Int
-  fun callaway_traits_game = igraph_callaway_traits_game(graph : T*, nodes : IntegerT, types : IntegerT, edges_per_step : IntegerT, type_dist : VectorT*, pref_matrix : MatrixT*, directed : BoolT) : LibC::Int
-  fun establishment_game = igraph_establishment_game(graph : T*, nodes : IntegerT, types : IntegerT, k : IntegerT, type_dist : VectorT*, pref_matrix : MatrixT*, directed : BoolT) : LibC::Int
-  fun grg_game = igraph_grg_game(graph : T*, nodes : IntegerT, radius : RealT, torus : BoolT, x : VectorT*, y : VectorT*) : LibC::Int
-  fun preference_game = igraph_preference_game(graph : T*, nodes : IntegerT, types : IntegerT, type_dist : VectorT*, fixed_sizes : BoolT, pref_matrix : MatrixT*, node_type_vec : VectorT*, directed : BoolT, loops : BoolT) : LibC::Int
-  fun asymmetric_preference_game = igraph_asymmetric_preference_game(graph : T*, nodes : IntegerT, types : IntegerT, type_dist_matrix : MatrixT*, pref_matrix : MatrixT*, node_type_in_vec : VectorT*, node_type_out_vec : VectorT*, loops : BoolT) : LibC::Int
-  fun rewire_edges = igraph_rewire_edges(graph : T*, prob : RealT, loops : BoolT, multiple : BoolT) : LibC::Int
-  fun watts_strogatz_game = igraph_watts_strogatz_game(graph : T*, dim : IntegerT, size : IntegerT, nei : IntegerT, p : RealT, loops : BoolT, multiple : BoolT) : LibC::Int
-  fun lastcit_game = igraph_lastcit_game(graph : T*, nodes : IntegerT, edges_per_node : IntegerT, agebins : IntegerT, preference : VectorT*, directed : BoolT) : LibC::Int
-  fun cited_type_game = igraph_cited_type_game(graph : T*, nodes : IntegerT, types : VectorT*, pref : VectorT*, edges_per_step : IntegerT, directed : BoolT) : LibC::Int
-  fun citing_cited_type_game = igraph_citing_cited_type_game(graph : T*, nodes : IntegerT, types : VectorT*, pref : MatrixT*, edges_per_step : IntegerT, directed : BoolT) : LibC::Int
-  fun forest_fire_game = igraph_forest_fire_game(graph : T*, nodes : IntegerT, fw_prob : RealT, bw_factor : RealT, ambs : IntegerT, directed : BoolT) : LibC::Int
-  fun simple_interconnected_islands_game = igraph_simple_interconnected_islands_game(graph : T*, islands_n : IntegerT, islands_size : IntegerT, islands_pin : RealT, n_inter : IntegerT) : LibC::Int
-  fun static_fitness_game = igraph_static_fitness_game(graph : T*, no_of_edges : IntegerT, fitness_out : VectorT*, fitness_in : VectorT*, loops : BoolT, multiple : BoolT) : LibC::Int
-  fun static_power_law_game = igraph_static_power_law_game(graph : T*, no_of_nodes : IntegerT, no_of_edges : IntegerT, exponent_out : RealT, exponent_in : RealT, loops : BoolT, multiple : BoolT, finite_size_correction : BoolT) : LibC::Int
-  fun k_regular_game = igraph_k_regular_game(graph : T*, no_of_nodes : IntegerT, k : IntegerT, directed : BoolT, multiple : BoolT) : LibC::Int
-  fun sbm_game = igraph_sbm_game(graph : T*, n : IntegerT, pref_matrix : MatrixT*, block_sizes : VectorIntT*, directed : BoolT, loops : BoolT) : LibC::Int
-  fun deterministic_optimal_imitation = igraph_deterministic_optimal_imitation(graph : T*, vid : IntegerT, optimality : OptimalT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
+  fun growing_random_game = igraph_growing_random_game(graph : S*, n : IntegerT, m : IntegerT, directed : BoolT, citation : BoolT) : LibC::Int
+  fun barabasi_aging_game = igraph_barabasi_aging_game(graph : S*, nodes : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, pa_exp : RealT, aging_exp : RealT, aging_bin : IntegerT, zero_deg_appeal : RealT, zero_age_appeal : RealT, deg_coef : RealT, age_coef : RealT, directed : BoolT) : LibC::Int
+  fun recent_degree_game = igraph_recent_degree_game(graph : S*, n : IntegerT, power : RealT, window : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, zero_appeal : RealT, directed : BoolT) : LibC::Int
+  fun recent_degree_aging_game = igraph_recent_degree_aging_game(graph : S*, nodes : IntegerT, m : IntegerT, outseq : VectorT*, outpref : BoolT, pa_exp : RealT, aging_exp : RealT, aging_bin : IntegerT, window : IntegerT, zero_appeal : RealT, directed : BoolT) : LibC::Int
+  fun callaway_traits_game = igraph_callaway_traits_game(graph : S*, nodes : IntegerT, types : IntegerT, edges_per_step : IntegerT, type_dist : VectorT*, pref_matrix : MatrixT*, directed : BoolT) : LibC::Int
+  fun establishment_game = igraph_establishment_game(graph : S*, nodes : IntegerT, types : IntegerT, k : IntegerT, type_dist : VectorT*, pref_matrix : MatrixT*, directed : BoolT) : LibC::Int
+  fun grg_game = igraph_grg_game(graph : S*, nodes : IntegerT, radius : RealT, torus : BoolT, x : VectorT*, y : VectorT*) : LibC::Int
+  fun preference_game = igraph_preference_game(graph : S*, nodes : IntegerT, types : IntegerT, type_dist : VectorT*, fixed_sizes : BoolT, pref_matrix : MatrixT*, node_type_vec : VectorT*, directed : BoolT, loops : BoolT) : LibC::Int
+  fun asymmetric_preference_game = igraph_asymmetric_preference_game(graph : S*, nodes : IntegerT, types : IntegerT, type_dist_matrix : MatrixT*, pref_matrix : MatrixT*, node_type_in_vec : VectorT*, node_type_out_vec : VectorT*, loops : BoolT) : LibC::Int
+  fun rewire_edges = igraph_rewire_edges(graph : S*, prob : RealT, loops : BoolT, multiple : BoolT) : LibC::Int
+  fun watts_strogatz_game = igraph_watts_strogatz_game(graph : S*, dim : IntegerT, size : IntegerT, nei : IntegerT, p : RealT, loops : BoolT, multiple : BoolT) : LibC::Int
+  fun lastcit_game = igraph_lastcit_game(graph : S*, nodes : IntegerT, edges_per_node : IntegerT, agebins : IntegerT, preference : VectorT*, directed : BoolT) : LibC::Int
+  fun cited_type_game = igraph_cited_type_game(graph : S*, nodes : IntegerT, types : VectorT*, pref : VectorT*, edges_per_step : IntegerT, directed : BoolT) : LibC::Int
+  fun citing_cited_type_game = igraph_citing_cited_type_game(graph : S*, nodes : IntegerT, types : VectorT*, pref : MatrixT*, edges_per_step : IntegerT, directed : BoolT) : LibC::Int
+  fun forest_fire_game = igraph_forest_fire_game(graph : S*, nodes : IntegerT, fw_prob : RealT, bw_factor : RealT, ambs : IntegerT, directed : BoolT) : LibC::Int
+  fun simple_interconnected_islands_game = igraph_simple_interconnected_islands_game(graph : S*, islands_n : IntegerT, islands_size : IntegerT, islands_pin : RealT, n_inter : IntegerT) : LibC::Int
+  fun static_fitness_game = igraph_static_fitness_game(graph : S*, no_of_edges : IntegerT, fitness_out : VectorT*, fitness_in : VectorT*, loops : BoolT, multiple : BoolT) : LibC::Int
+  fun static_power_law_game = igraph_static_power_law_game(graph : S*, no_of_nodes : IntegerT, no_of_edges : IntegerT, exponent_out : RealT, exponent_in : RealT, loops : BoolT, multiple : BoolT, finite_size_correction : BoolT) : LibC::Int
+  fun k_regular_game = igraph_k_regular_game(graph : S*, no_of_nodes : IntegerT, k : IntegerT, directed : BoolT, multiple : BoolT) : LibC::Int
+  fun sbm_game = igraph_sbm_game(graph : S*, n : IntegerT, pref_matrix : MatrixT*, block_sizes : VectorIntT*, directed : BoolT, loops : BoolT) : LibC::Int
+  fun deterministic_optimal_imitation = igraph_deterministic_optimal_imitation(graph : S*, vid : IntegerT, optimality : OptimalT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
   enum OptimalT
     Minimum = 0
     Maximum = 1
   end
-  fun moran_process = igraph_moran_process(graph : T*, weights : VectorT*, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
-  fun roulette_wheel_imitation = igraph_roulette_wheel_imitation(graph : T*, vid : IntegerT, islocal : BoolT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
-  fun stochastic_imitation = igraph_stochastic_imitation(graph : T*, vid : IntegerT, algo : ImitateAlgorithmT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
+  fun moran_process = igraph_moran_process(graph : S*, weights : VectorT*, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
+  fun roulette_wheel_imitation = igraph_roulette_wheel_imitation(graph : S*, vid : IntegerT, islocal : BoolT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
+  fun stochastic_imitation = igraph_stochastic_imitation(graph : S*, vid : IntegerT, algo : ImitateAlgorithmT, quantities : VectorT*, strategies : VectorT*, mode : NeimodeT) : LibC::Int
   enum ImitateAlgorithmT
     ImitateAugmented = 0
     ImitateBlind = 1
     ImitateContracted = 2
   end
-  fun closeness = igraph_closeness(graph : T*, res : VectorT*, vids : VsT, mode : NeimodeT, weights : VectorT*, normalized : BoolT) : LibC::Int
-  fun closeness_estimate = igraph_closeness_estimate(graph : T*, res : VectorT*, vids : VsT, mode : NeimodeT, cutoff : RealT, weights : VectorT*, normalized : BoolT) : LibC::Int
-  fun betweenness = igraph_betweenness(graph : T*, res : VectorT*, vids : VsT, directed : BoolT, weights : VectorT*, nobigint : BoolT) : LibC::Int
-  fun betweenness_estimate = igraph_betweenness_estimate(graph : T*, res : VectorT*, vids : VsT, directed : BoolT, cutoff : RealT, weights : VectorT*, nobigint : BoolT) : LibC::Int
-  fun edge_betweenness = igraph_edge_betweenness(graph : T*, result : VectorT*, directed : BoolT, weigths : VectorT*) : LibC::Int
-  fun edge_betweenness_estimate = igraph_edge_betweenness_estimate(graph : T*, result : VectorT*, directed : BoolT, cutoff : RealT, weights : VectorT*) : LibC::Int
-  fun pagerank_old = igraph_pagerank_old(graph : T*, res : VectorT*, vids : VsT, directed : BoolT, niter : IntegerT, eps : RealT, damping : RealT, old : BoolT) : LibC::Int
+  fun closeness = igraph_closeness(graph : S*, res : VectorT*, vids : VsT, mode : NeimodeT, weights : VectorT*, normalized : BoolT) : LibC::Int
+  fun closeness_estimate = igraph_closeness_estimate(graph : S*, res : VectorT*, vids : VsT, mode : NeimodeT, cutoff : RealT, weights : VectorT*, normalized : BoolT) : LibC::Int
+  fun betweenness = igraph_betweenness(graph : S*, res : VectorT*, vids : VsT, directed : BoolT, weights : VectorT*, nobigint : BoolT) : LibC::Int
+  fun betweenness_estimate = igraph_betweenness_estimate(graph : S*, res : VectorT*, vids : VsT, directed : BoolT, cutoff : RealT, weights : VectorT*, nobigint : BoolT) : LibC::Int
+  fun edge_betweenness = igraph_edge_betweenness(graph : S*, result : VectorT*, directed : BoolT, weigths : VectorT*) : LibC::Int
+  fun edge_betweenness_estimate = igraph_edge_betweenness_estimate(graph : S*, result : VectorT*, directed : BoolT, cutoff : RealT, weights : VectorT*) : LibC::Int
+  fun pagerank_old = igraph_pagerank_old(graph : S*, res : VectorT*, vids : VsT, directed : BoolT, niter : IntegerT, eps : RealT, damping : RealT, old : BoolT) : LibC::Int
   PagerankAlgoPower = 0
   PagerankAlgoArpack = 1
   PagerankAlgoPrpack = 2
@@ -2161,60 +2160,60 @@ lib IGraph
     niter : IntegerT
     eps : RealT
   end
-  fun pagerank = igraph_pagerank(graph : T*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, weights : VectorT*, options : Void*) : LibC::Int
+  fun pagerank = igraph_pagerank(graph : S*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, weights : VectorT*, options : Void*) : LibC::Int
   enum PagerankAlgoT
     PagerankAlgoPower = 0
     PagerankAlgoArpack = 1
     PagerankAlgoPrpack = 2
   end
-  fun personalized_pagerank = igraph_personalized_pagerank(graph : T*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, reset : VectorT*, weights : VectorT*, options : Void*) : LibC::Int
-  fun personalized_pagerank_vs = igraph_personalized_pagerank_vs(graph : T*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, reset_vids : VsT, weights : VectorT*, options : Void*) : LibC::Int
-  fun eigenvector_centrality = igraph_eigenvector_centrality(graph : T*, vector : VectorT*, value : RealT*, directed : BoolT, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
-  fun hub_score = igraph_hub_score(graph : T*, vector : VectorT*, value : RealT*, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
-  fun authority_score = igraph_authority_score(graph : T*, vector : VectorT*, value : RealT*, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
-  fun constraint = igraph_constraint(graph : T*, res : VectorT*, vids : VsT, weights : VectorT*) : LibC::Int
-  fun strength = igraph_strength(graph : T*, res : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT, weights : VectorT*) : LibC::Int
-  fun convergence_degree = igraph_convergence_degree(graph : T*, result : VectorT*, ins : VectorT*, outs : VectorT*) : LibC::Int
-  fun sort_vertex_ids_by_degree = igraph_sort_vertex_ids_by_degree(graph : T*, outvids : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT, order : OrderT, only_indices : BoolT) : LibC::Int
+  fun personalized_pagerank = igraph_personalized_pagerank(graph : S*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, reset : VectorT*, weights : VectorT*, options : Void*) : LibC::Int
+  fun personalized_pagerank_vs = igraph_personalized_pagerank_vs(graph : S*, algo : PagerankAlgoT, vector : VectorT*, value : RealT*, vids : VsT, directed : BoolT, damping : RealT, reset_vids : VsT, weights : VectorT*, options : Void*) : LibC::Int
+  fun eigenvector_centrality = igraph_eigenvector_centrality(graph : S*, vector : VectorT*, value : RealT*, directed : BoolT, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
+  fun hub_score = igraph_hub_score(graph : S*, vector : VectorT*, value : RealT*, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
+  fun authority_score = igraph_authority_score(graph : S*, vector : VectorT*, value : RealT*, scale : BoolT, weights : VectorT*, options : ArpackOptionsT*) : LibC::Int
+  fun constraint = igraph_constraint(graph : S*, res : VectorT*, vids : VsT, weights : VectorT*) : LibC::Int
+  fun strength = igraph_strength(graph : S*, res : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT, weights : VectorT*) : LibC::Int
+  fun convergence_degree = igraph_convergence_degree(graph : S*, result : VectorT*, ins : VectorT*, outs : VectorT*) : LibC::Int
+  fun sort_vertex_ids_by_degree = igraph_sort_vertex_ids_by_degree(graph : S*, outvids : VectorT*, vids : VsT, mode : NeimodeT, loops : BoolT, order : OrderT, only_indices : BoolT) : LibC::Int
   enum OrderT
     Ascending = 0
     Descending = 1
   end
   fun centralization = igraph_centralization(scores : VectorT*, theoretical_max : RealT, normalized : BoolT) : RealT
-  fun centralization_degree = igraph_centralization_degree(graph : T*, res : VectorT*, mode : NeimodeT, loops : BoolT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
-  fun centralization_degree_tmax = igraph_centralization_degree_tmax(graph : T*, nodes : IntegerT, mode : NeimodeT, loops : BoolT, res : RealT*) : LibC::Int
-  fun centralization_betweenness = igraph_centralization_betweenness(graph : T*, res : VectorT*, directed : BoolT, nobigint : BoolT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
-  fun centralization_betweenness_tmax = igraph_centralization_betweenness_tmax(graph : T*, nodes : IntegerT, directed : BoolT, res : RealT*) : LibC::Int
-  fun centralization_closeness = igraph_centralization_closeness(graph : T*, res : VectorT*, mode : NeimodeT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
-  fun centralization_closeness_tmax = igraph_centralization_closeness_tmax(graph : T*, nodes : IntegerT, mode : NeimodeT, res : RealT*) : LibC::Int
-  fun centralization_eigenvector_centrality = igraph_centralization_eigenvector_centrality(graph : T*, vector : VectorT*, value : RealT*, directed : BoolT, scale : BoolT, options : ArpackOptionsT*, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
-  fun centralization_eigenvector_centrality_tmax = igraph_centralization_eigenvector_centrality_tmax(graph : T*, nodes : IntegerT, directed : BoolT, scale : BoolT, res : RealT*) : LibC::Int
-  fun diameter = igraph_diameter(graph : T*, res : IntegerT*, from : IntegerT*, to : IntegerT*, path : VectorT*, directed : BoolT, unconn : BoolT) : LibC::Int
-  fun diameter_dijkstra = igraph_diameter_dijkstra(graph : T*, weights : VectorT*, pres : RealT*, pfrom : IntegerT*, pto : IntegerT*, path : VectorT*, directed : BoolT, unconn : BoolT) : LibC::Int
-  fun shortest_paths = igraph_shortest_paths(graph : T*, res : MatrixT*, from : VsT, to : VsT, mode : NeimodeT) : LibC::Int
-  fun get_shortest_paths = igraph_get_shortest_paths(graph : T*, vertices : VectorPtrT*, edges : VectorPtrT*, from : IntegerT, to : VsT, mode : NeimodeT, predecessors : VectorLongT*, inbound_edges : VectorLongT*) : LibC::Int
-  fun get_shortest_path = igraph_get_shortest_path(graph : T*, vertices : VectorT*, edges : VectorT*, from : IntegerT, to : IntegerT, mode : NeimodeT) : LibC::Int
-  fun get_all_shortest_paths = igraph_get_all_shortest_paths(graph : T*, res : VectorPtrT*, nrgeo : VectorT*, from : IntegerT, to : VsT, mode : NeimodeT) : LibC::Int
-  fun shortest_paths_dijkstra = igraph_shortest_paths_dijkstra(graph : T*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
-  fun shortest_paths_bellman_ford = igraph_shortest_paths_bellman_ford(graph : T*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
-  fun get_shortest_paths_dijkstra = igraph_get_shortest_paths_dijkstra(graph : T*, vertices : VectorPtrT*, edges : VectorPtrT*, from : IntegerT, to : VsT, weights : VectorT*, mode : NeimodeT, predecessors : VectorLongT*, inbound_edges : VectorLongT*) : LibC::Int
-  fun get_shortest_path_dijkstra = igraph_get_shortest_path_dijkstra(graph : T*, vertices : VectorT*, edges : VectorT*, from : IntegerT, to : IntegerT, weights : VectorT*, mode : NeimodeT) : LibC::Int
-  fun get_all_shortest_paths_dijkstra = igraph_get_all_shortest_paths_dijkstra(graph : T*, res : VectorPtrT*, nrgeo : VectorT*, from : IntegerT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
-  fun shortest_paths_johnson = igraph_shortest_paths_johnson(graph : T*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*) : LibC::Int
-  fun average_path_length = igraph_average_path_length(graph : T*, res : RealT*, directed : BoolT, unconn : BoolT) : LibC::Int
-  fun path_length_hist = igraph_path_length_hist(graph : T*, res : VectorT*, unconnected : RealT*, directed : BoolT) : LibC::Int
-  fun eccentricity = igraph_eccentricity(graph : T*, res : VectorT*, vids : VsT, mode : NeimodeT) : LibC::Int
-  fun radius = igraph_radius(graph : T*, radius : RealT*, mode : NeimodeT) : LibC::Int
-  fun clusters = igraph_clusters(graph : T*, membership : VectorT*, csize : VectorT*, no : IntegerT*, mode : ConnectednessT) : LibC::Int
+  fun centralization_degree = igraph_centralization_degree(graph : S*, res : VectorT*, mode : NeimodeT, loops : BoolT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
+  fun centralization_degree_tmax = igraph_centralization_degree_tmax(graph : S*, nodes : IntegerT, mode : NeimodeT, loops : BoolT, res : RealT*) : LibC::Int
+  fun centralization_betweenness = igraph_centralization_betweenness(graph : S*, res : VectorT*, directed : BoolT, nobigint : BoolT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
+  fun centralization_betweenness_tmax = igraph_centralization_betweenness_tmax(graph : S*, nodes : IntegerT, directed : BoolT, res : RealT*) : LibC::Int
+  fun centralization_closeness = igraph_centralization_closeness(graph : S*, res : VectorT*, mode : NeimodeT, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
+  fun centralization_closeness_tmax = igraph_centralization_closeness_tmax(graph : S*, nodes : IntegerT, mode : NeimodeT, res : RealT*) : LibC::Int
+  fun centralization_eigenvector_centrality = igraph_centralization_eigenvector_centrality(graph : S*, vector : VectorT*, value : RealT*, directed : BoolT, scale : BoolT, options : ArpackOptionsT*, centralization : RealT*, theoretical_max : RealT*, normalized : BoolT) : LibC::Int
+  fun centralization_eigenvector_centrality_tmax = igraph_centralization_eigenvector_centrality_tmax(graph : S*, nodes : IntegerT, directed : BoolT, scale : BoolT, res : RealT*) : LibC::Int
+  fun diameter = igraph_diameter(graph : S*, res : IntegerT*, from : IntegerT*, to : IntegerT*, path : VectorT*, directed : BoolT, unconn : BoolT) : LibC::Int
+  fun diameter_dijkstra = igraph_diameter_dijkstra(graph : S*, weights : VectorT*, pres : RealT*, pfrom : IntegerT*, pto : IntegerT*, path : VectorT*, directed : BoolT, unconn : BoolT) : LibC::Int
+  fun shortest_paths = igraph_shortest_paths(graph : S*, res : MatrixT*, from : VsT, to : VsT, mode : NeimodeT) : LibC::Int
+  fun get_shortest_paths = igraph_get_shortest_paths(graph : S*, vertices : VectorPtrT*, edges : VectorPtrT*, from : IntegerT, to : VsT, mode : NeimodeT, predecessors : VectorLongT*, inbound_edges : VectorLongT*) : LibC::Int
+  fun get_shortest_path = igraph_get_shortest_path(graph : S*, vertices : VectorT*, edges : VectorT*, from : IntegerT, to : IntegerT, mode : NeimodeT) : LibC::Int
+  fun get_all_shortest_paths = igraph_get_all_shortest_paths(graph : S*, res : VectorPtrT*, nrgeo : VectorT*, from : IntegerT, to : VsT, mode : NeimodeT) : LibC::Int
+  fun shortest_paths_dijkstra = igraph_shortest_paths_dijkstra(graph : S*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
+  fun shortest_paths_bellman_ford = igraph_shortest_paths_bellman_ford(graph : S*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
+  fun get_shortest_paths_dijkstra = igraph_get_shortest_paths_dijkstra(graph : S*, vertices : VectorPtrT*, edges : VectorPtrT*, from : IntegerT, to : VsT, weights : VectorT*, mode : NeimodeT, predecessors : VectorLongT*, inbound_edges : VectorLongT*) : LibC::Int
+  fun get_shortest_path_dijkstra = igraph_get_shortest_path_dijkstra(graph : S*, vertices : VectorT*, edges : VectorT*, from : IntegerT, to : IntegerT, weights : VectorT*, mode : NeimodeT) : LibC::Int
+  fun get_all_shortest_paths_dijkstra = igraph_get_all_shortest_paths_dijkstra(graph : S*, res : VectorPtrT*, nrgeo : VectorT*, from : IntegerT, to : VsT, weights : VectorT*, mode : NeimodeT) : LibC::Int
+  fun shortest_paths_johnson = igraph_shortest_paths_johnson(graph : S*, res : MatrixT*, from : VsT, to : VsT, weights : VectorT*) : LibC::Int
+  fun average_path_length = igraph_average_path_length(graph : S*, res : RealT*, directed : BoolT, unconn : BoolT) : LibC::Int
+  fun path_length_hist = igraph_path_length_hist(graph : S*, res : VectorT*, unconnected : RealT*, directed : BoolT) : LibC::Int
+  fun eccentricity = igraph_eccentricity(graph : S*, res : VectorT*, vids : VsT, mode : NeimodeT) : LibC::Int
+  fun radius = igraph_radius(graph : S*, radius : RealT*, mode : NeimodeT) : LibC::Int
+  fun clusters = igraph_clusters(graph : S*, membership : VectorT*, csize : VectorT*, no : IntegerT*, mode : ConnectednessT) : LibC::Int
   enum ConnectednessT
     Weak = 1
     Strong = 2
   end
-  fun is_connected = igraph_is_connected(graph : T*, res : BoolT*, mode : ConnectednessT) : LibC::Int
+  fun is_connected = igraph_is_connected(graph : S*, res : BoolT*, mode : ConnectednessT) : LibC::Int
   fun decompose_destroy = igraph_decompose_destroy(complist : VectorPtrT*)
-  fun decompose = igraph_decompose(graph : T*, components : VectorPtrT*, mode : ConnectednessT, maxcompno : LibC::Long, minelements : LibC::Long) : LibC::Int
-  fun articulation_points = igraph_articulation_points(graph : T*, res : VectorT*) : LibC::Int
-  fun biconnected_components = igraph_biconnected_components(graph : T*, no : IntegerT*, tree_edges : VectorPtrT*, component_edges : VectorPtrT*, components : VectorPtrT*, articulation_points : VectorT*) : LibC::Int
+  fun decompose = igraph_decompose(graph : S*, components : VectorPtrT*, mode : ConnectednessT, maxcompno : LibC::Long, minelements : LibC::Long) : LibC::Int
+  fun articulation_points = igraph_articulation_points(graph : S*, res : VectorT*) : LibC::Int
+  fun biconnected_components = igraph_biconnected_components(graph : S*, no : IntegerT*, tree_edges : VectorPtrT*, component_edges : VectorPtrT*, components : VectorPtrT*, articulation_points : VectorT*) : LibC::Int
   AttributeDefault = 0
   AttributeNumeric = 1
   AttributeBoolean = 5
@@ -2280,27 +2279,27 @@ lib IGraph
   fun attribute_combination_remove = igraph_attribute_combination_remove(comb : AttributeCombinationT*, name : LibC::Char*) : LibC::Int
   fun attribute_combination_query = igraph_attribute_combination_query(comb : AttributeCombinationT*, name : LibC::Char*, type : AttributeCombinationTypeT*, func : Void**) : LibC::Int
   struct AttributeTableT
-    init : T*, VectorPtrT* -> LibC::Int
-    destroy : T* -> Void
-    copy : T*, T*, BoolT, BoolT, BoolT -> LibC::Int
-    add_vertices : T*, LibC::Long, VectorPtrT* -> LibC::Int
-    permute_vertices : T*, T*, VectorT* -> LibC::Int
-    combine_vertices : T*, T*, VectorPtrT*, AttributeCombinationT* -> LibC::Int
-    add_edges : T*, VectorT*, VectorPtrT* -> LibC::Int
-    permute_edges : T*, T*, VectorT* -> LibC::Int
-    combine_edges : T*, T*, VectorPtrT*, AttributeCombinationT* -> LibC::Int
-    get_info : T*, StrvectorT*, VectorT*, StrvectorT*, VectorT*, StrvectorT*, VectorT* -> LibC::Int
-    has_attr : T*, AttributeElemtypeT, LibC::Char* -> BoolT
-    gettype : T*, AttributeTypeT*, AttributeElemtypeT, LibC::Char* -> LibC::Int
-    get_numeric_graph_attr : T*, LibC::Char*, VectorT* -> LibC::Int
-    get_string_graph_attr : T*, LibC::Char*, StrvectorT* -> LibC::Int
-    get_bool_graph_attr : T*, LibC::Char*, VectorBoolT* -> LibC::Int
-    get_numeric_vertex_attr : T*, LibC::Char*, VsT, VectorT* -> LibC::Int
-    get_string_vertex_attr : T*, LibC::Char*, VsT, StrvectorT* -> LibC::Int
-    get_bool_vertex_attr : T*, LibC::Char*, VsT, VectorBoolT* -> LibC::Int
-    get_numeric_edge_attr : T*, LibC::Char*, EsT, VectorT* -> LibC::Int
-    get_string_edge_attr : T*, LibC::Char*, EsT, StrvectorT* -> LibC::Int
-    get_bool_edge_attr : T*, LibC::Char*, EsT, VectorBoolT* -> LibC::Int
+    init : S*, VectorPtrT* -> LibC::Int
+    destroy : S* -> Void
+    copy : S*, S*, BoolT, BoolT, BoolT -> LibC::Int
+    add_vertices : S*, LibC::Long, VectorPtrT* -> LibC::Int
+    permute_vertices : S*, S*, VectorT* -> LibC::Int
+    combine_vertices : S*, S*, VectorPtrT*, AttributeCombinationT* -> LibC::Int
+    add_edges : S*, VectorT*, VectorPtrT* -> LibC::Int
+    permute_edges : S*, S*, VectorT* -> LibC::Int
+    combine_edges : S*, S*, VectorPtrT*, AttributeCombinationT* -> LibC::Int
+    get_info : S*, StrvectorT*, VectorT*, StrvectorT*, VectorT*, StrvectorT*, VectorT* -> LibC::Int
+    has_attr : S*, AttributeElemtypeT, LibC::Char* -> BoolT
+    gettype : S*, AttributeTypeT*, AttributeElemtypeT, LibC::Char* -> LibC::Int
+    get_numeric_graph_attr : S*, LibC::Char*, VectorT* -> LibC::Int
+    get_string_graph_attr : S*, LibC::Char*, StrvectorT* -> LibC::Int
+    get_bool_graph_attr : S*, LibC::Char*, VectorBoolT* -> LibC::Int
+    get_numeric_vertex_attr : S*, LibC::Char*, VsT, VectorT* -> LibC::Int
+    get_string_vertex_attr : S*, LibC::Char*, VsT, StrvectorT* -> LibC::Int
+    get_bool_vertex_attr : S*, LibC::Char*, VsT, VectorBoolT* -> LibC::Int
+    get_numeric_edge_attr : S*, LibC::Char*, EsT, VectorT* -> LibC::Int
+    get_string_edge_attr : S*, LibC::Char*, EsT, StrvectorT* -> LibC::Int
+    get_bool_edge_attr : S*, LibC::Char*, EsT, VectorBoolT* -> LibC::Int
   end
   enum AttributeElemtypeT
     AttributeGraph = 0
@@ -2309,144 +2308,144 @@ lib IGraph
   end
   fun i_set_attribute_table = igraph_i_set_attribute_table(table : AttributeTableT*) : AttributeTableT*
   fun has_attribute_table = igraph_has_attribute_table : BoolT
-  fun i_attribute_init = igraph_i_attribute_init(graph : T*, attr : Void*) : LibC::Int
-  fun i_attribute_destroy = igraph_i_attribute_destroy(graph : T*)
-  fun i_attribute_copy = igraph_i_attribute_copy(to : T*, from : T*, ga : BoolT, va : BoolT, ea : BoolT) : LibC::Int
-  fun i_attribute_add_vertices = igraph_i_attribute_add_vertices(graph : T*, nv : LibC::Long, attr : Void*) : LibC::Int
-  fun i_attribute_permute_vertices = igraph_i_attribute_permute_vertices(graph : T*, newgraph : T*, idx : VectorT*) : LibC::Int
-  fun i_attribute_combine_vertices = igraph_i_attribute_combine_vertices(graph : T*, newgraph : T*, merges : VectorPtrT*, comb : AttributeCombinationT*) : LibC::Int
-  fun i_attribute_add_edges = igraph_i_attribute_add_edges(graph : T*, edges : VectorT*, attr : Void*) : LibC::Int
-  fun i_attribute_permute_edges = igraph_i_attribute_permute_edges(graph : T*, newgraph : T*, idx : VectorT*) : LibC::Int
-  fun i_attribute_combine_edges = igraph_i_attribute_combine_edges(graph : T*, newgraph : T*, merges : VectorPtrT*, comb : AttributeCombinationT*) : LibC::Int
-  fun i_attribute_get_info = igraph_i_attribute_get_info(graph : T*, gnames : StrvectorT*, gtypes : VectorT*, vnames : StrvectorT*, vtypes : VectorT*, enames : StrvectorT*, etypes : VectorT*) : LibC::Int
-  fun i_attribute_has_attr = igraph_i_attribute_has_attr(graph : T*, type : AttributeElemtypeT, name : LibC::Char*) : BoolT
-  fun i_attribute_gettype = igraph_i_attribute_gettype(graph : T*, type : AttributeTypeT*, elemtype : AttributeElemtypeT, name : LibC::Char*) : LibC::Int
-  fun i_attribute_get_numeric_graph_attr = igraph_i_attribute_get_numeric_graph_attr(graph : T*, name : LibC::Char*, value : VectorT*) : LibC::Int
-  fun i_attribute_get_numeric_vertex_attr = igraph_i_attribute_get_numeric_vertex_attr(graph : T*, name : LibC::Char*, vs : VsT, value : VectorT*) : LibC::Int
-  fun i_attribute_get_numeric_edge_attr = igraph_i_attribute_get_numeric_edge_attr(graph : T*, name : LibC::Char*, es : EsT, value : VectorT*) : LibC::Int
-  fun i_attribute_get_string_graph_attr = igraph_i_attribute_get_string_graph_attr(graph : T*, name : LibC::Char*, value : StrvectorT*) : LibC::Int
-  fun i_attribute_get_string_vertex_attr = igraph_i_attribute_get_string_vertex_attr(graph : T*, name : LibC::Char*, vs : VsT, value : StrvectorT*) : LibC::Int
-  fun i_attribute_get_string_edge_attr = igraph_i_attribute_get_string_edge_attr(graph : T*, name : LibC::Char*, es : EsT, value : StrvectorT*) : LibC::Int
-  fun i_attribute_get_bool_graph_attr = igraph_i_attribute_get_bool_graph_attr(graph : T*, name : LibC::Char*, value : VectorBoolT*) : LibC::Int
-  fun i_attribute_get_bool_vertex_attr = igraph_i_attribute_get_bool_vertex_attr(graph : T*, name : LibC::Char*, vs : VsT, value : VectorBoolT*) : LibC::Int
-  fun i_attribute_get_bool_edge_attr = igraph_i_attribute_get_bool_edge_attr(graph : T*, name : LibC::Char*, es : EsT, value : VectorBoolT*) : LibC::Int
-  fun cattribute_gan = igraph_cattribute_GAN(graph : T*, name : LibC::Char*) : RealT
-  fun cattribute_gab = igraph_cattribute_GAB(graph : T*, name : LibC::Char*) : BoolT
-  fun cattribute_gas = igraph_cattribute_GAS(graph : T*, name : LibC::Char*) : LibC::Char*
-  fun cattribute_van = igraph_cattribute_VAN(graph : T*, name : LibC::Char*, vid : IntegerT) : RealT
-  fun cattribute_vab = igraph_cattribute_VAB(graph : T*, name : LibC::Char*, vid : IntegerT) : BoolT
-  fun cattribute_vas = igraph_cattribute_VAS(graph : T*, name : LibC::Char*, vid : IntegerT) : LibC::Char*
-  fun cattribute_ean = igraph_cattribute_EAN(graph : T*, name : LibC::Char*, eid : IntegerT) : RealT
-  fun cattribute_eab = igraph_cattribute_EAB(graph : T*, name : LibC::Char*, eid : IntegerT) : BoolT
-  fun cattribute_eas = igraph_cattribute_EAS(graph : T*, name : LibC::Char*, eid : IntegerT) : LibC::Char*
-  fun cattribute_vanv = igraph_cattribute_VANV(graph : T*, name : LibC::Char*, vids : VsT, result : VectorT*) : LibC::Int
-  fun cattribute_eanv = igraph_cattribute_EANV(graph : T*, name : LibC::Char*, eids : EsT, result : VectorT*) : LibC::Int
-  fun cattribute_vasv = igraph_cattribute_VASV(graph : T*, name : LibC::Char*, vids : VsT, result : StrvectorT*) : LibC::Int
-  fun cattribute_easv = igraph_cattribute_EASV(graph : T*, name : LibC::Char*, eids : EsT, result : StrvectorT*) : LibC::Int
-  fun cattribute_vabv = igraph_cattribute_VABV(graph : T*, name : LibC::Char*, vids : VsT, result : VectorBoolT*) : LibC::Int
-  fun cattribute_eabv = igraph_cattribute_EABV(graph : T*, name : LibC::Char*, eids : EsT, result : VectorBoolT*) : LibC::Int
-  fun cattribute_list = igraph_cattribute_list(graph : T*, gnames : StrvectorT*, gtypes : VectorT*, vnames : StrvectorT*, vtypes : VectorT*, enames : StrvectorT*, etypes : VectorT*) : LibC::Int
-  fun cattribute_has_attr = igraph_cattribute_has_attr(graph : T*, type : AttributeElemtypeT, name : LibC::Char*) : BoolT
-  fun cattribute_gan_set = igraph_cattribute_GAN_set(graph : T*, name : LibC::Char*, value : RealT) : LibC::Int
-  fun cattribute_gab_set = igraph_cattribute_GAB_set(graph : T*, name : LibC::Char*, value : BoolT) : LibC::Int
-  fun cattribute_gas_set = igraph_cattribute_GAS_set(graph : T*, name : LibC::Char*, value : LibC::Char*) : LibC::Int
-  fun cattribute_van_set = igraph_cattribute_VAN_set(graph : T*, name : LibC::Char*, vid : IntegerT, value : RealT) : LibC::Int
-  fun cattribute_vab_set = igraph_cattribute_VAB_set(graph : T*, name : LibC::Char*, vid : IntegerT, value : BoolT) : LibC::Int
-  fun cattribute_vas_set = igraph_cattribute_VAS_set(graph : T*, name : LibC::Char*, vid : IntegerT, value : LibC::Char*) : LibC::Int
-  fun cattribute_ean_set = igraph_cattribute_EAN_set(graph : T*, name : LibC::Char*, eid : IntegerT, value : RealT) : LibC::Int
-  fun cattribute_eab_set = igraph_cattribute_EAB_set(graph : T*, name : LibC::Char*, eid : IntegerT, value : BoolT) : LibC::Int
-  fun cattribute_eas_set = igraph_cattribute_EAS_set(graph : T*, name : LibC::Char*, eid : IntegerT, value : LibC::Char*) : LibC::Int
-  fun cattribute_van_setv = igraph_cattribute_VAN_setv(graph : T*, name : LibC::Char*, v : VectorT*) : LibC::Int
-  fun cattribute_vab_setv = igraph_cattribute_VAB_setv(graph : T*, name : LibC::Char*, v : VectorBoolT*) : LibC::Int
-  fun cattribute_vas_setv = igraph_cattribute_VAS_setv(graph : T*, name : LibC::Char*, sv : StrvectorT*) : LibC::Int
-  fun cattribute_ean_setv = igraph_cattribute_EAN_setv(graph : T*, name : LibC::Char*, v : VectorT*) : LibC::Int
-  fun cattribute_eab_setv = igraph_cattribute_EAB_setv(graph : T*, name : LibC::Char*, v : VectorBoolT*) : LibC::Int
-  fun cattribute_eas_setv = igraph_cattribute_EAS_setv(graph : T*, name : LibC::Char*, sv : StrvectorT*) : LibC::Int
-  fun cattribute_remove_g = igraph_cattribute_remove_g(graph : T*, name : LibC::Char*)
-  fun cattribute_remove_v = igraph_cattribute_remove_v(graph : T*, name : LibC::Char*)
-  fun cattribute_remove_e = igraph_cattribute_remove_e(graph : T*, name : LibC::Char*)
-  fun cattribute_remove_all = igraph_cattribute_remove_all(graph : T*, g : BoolT, v : BoolT, e : BoolT)
-  fun are_connected = igraph_are_connected(graph : T*, v1 : IntegerT, v2 : IntegerT, res : BoolT*) : LibC::Int
-  fun minimum_spanning_tree = igraph_minimum_spanning_tree(graph : T*, res : VectorT*, weights : VectorT*) : LibC::Int
-  fun minimum_spanning_tree_unweighted = igraph_minimum_spanning_tree_unweighted(graph : T*, mst : T*) : LibC::Int
-  fun minimum_spanning_tree_prim = igraph_minimum_spanning_tree_prim(graph : T*, mst : T*, weights : VectorT*) : LibC::Int
-  fun subcomponent = igraph_subcomponent(graph : T*, res : VectorT*, vid : RealT, mode : NeimodeT) : LibC::Int
-  fun rewire = igraph_rewire(graph : T*, n : IntegerT, mode : RewiringT) : LibC::Int
+  fun i_attribute_init = igraph_i_attribute_init(graph : S*, attr : Void*) : LibC::Int
+  fun i_attribute_destroy = igraph_i_attribute_destroy(graph : S*)
+  fun i_attribute_copy = igraph_i_attribute_copy(to : S*, from : S*, ga : BoolT, va : BoolT, ea : BoolT) : LibC::Int
+  fun i_attribute_add_vertices = igraph_i_attribute_add_vertices(graph : S*, nv : LibC::Long, attr : Void*) : LibC::Int
+  fun i_attribute_permute_vertices = igraph_i_attribute_permute_vertices(graph : S*, newgraph : S*, idx : VectorT*) : LibC::Int
+  fun i_attribute_combine_vertices = igraph_i_attribute_combine_vertices(graph : S*, newgraph : S*, merges : VectorPtrT*, comb : AttributeCombinationT*) : LibC::Int
+  fun i_attribute_add_edges = igraph_i_attribute_add_edges(graph : S*, edges : VectorT*, attr : Void*) : LibC::Int
+  fun i_attribute_permute_edges = igraph_i_attribute_permute_edges(graph : S*, newgraph : S*, idx : VectorT*) : LibC::Int
+  fun i_attribute_combine_edges = igraph_i_attribute_combine_edges(graph : S*, newgraph : S*, merges : VectorPtrT*, comb : AttributeCombinationT*) : LibC::Int
+  fun i_attribute_get_info = igraph_i_attribute_get_info(graph : S*, gnames : StrvectorT*, gtypes : VectorT*, vnames : StrvectorT*, vtypes : VectorT*, enames : StrvectorT*, etypes : VectorT*) : LibC::Int
+  fun i_attribute_has_attr = igraph_i_attribute_has_attr(graph : S*, type : AttributeElemtypeT, name : LibC::Char*) : BoolT
+  fun i_attribute_gettype = igraph_i_attribute_gettype(graph : S*, type : AttributeTypeT*, elemtype : AttributeElemtypeT, name : LibC::Char*) : LibC::Int
+  fun i_attribute_get_numeric_graph_attr = igraph_i_attribute_get_numeric_graph_attr(graph : S*, name : LibC::Char*, value : VectorT*) : LibC::Int
+  fun i_attribute_get_numeric_vertex_attr = igraph_i_attribute_get_numeric_vertex_attr(graph : S*, name : LibC::Char*, vs : VsT, value : VectorT*) : LibC::Int
+  fun i_attribute_get_numeric_edge_attr = igraph_i_attribute_get_numeric_edge_attr(graph : S*, name : LibC::Char*, es : EsT, value : VectorT*) : LibC::Int
+  fun i_attribute_get_string_graph_attr = igraph_i_attribute_get_string_graph_attr(graph : S*, name : LibC::Char*, value : StrvectorT*) : LibC::Int
+  fun i_attribute_get_string_vertex_attr = igraph_i_attribute_get_string_vertex_attr(graph : S*, name : LibC::Char*, vs : VsT, value : StrvectorT*) : LibC::Int
+  fun i_attribute_get_string_edge_attr = igraph_i_attribute_get_string_edge_attr(graph : S*, name : LibC::Char*, es : EsT, value : StrvectorT*) : LibC::Int
+  fun i_attribute_get_bool_graph_attr = igraph_i_attribute_get_bool_graph_attr(graph : S*, name : LibC::Char*, value : VectorBoolT*) : LibC::Int
+  fun i_attribute_get_bool_vertex_attr = igraph_i_attribute_get_bool_vertex_attr(graph : S*, name : LibC::Char*, vs : VsT, value : VectorBoolT*) : LibC::Int
+  fun i_attribute_get_bool_edge_attr = igraph_i_attribute_get_bool_edge_attr(graph : S*, name : LibC::Char*, es : EsT, value : VectorBoolT*) : LibC::Int
+  fun cattribute_gan = igraph_cattribute_GAN(graph : S*, name : LibC::Char*) : RealT
+  fun cattribute_gab = igraph_cattribute_GAB(graph : S*, name : LibC::Char*) : BoolT
+  fun cattribute_gas = igraph_cattribute_GAS(graph : S*, name : LibC::Char*) : LibC::Char*
+  fun cattribute_van = igraph_cattribute_VAN(graph : S*, name : LibC::Char*, vid : IntegerT) : RealT
+  fun cattribute_vab = igraph_cattribute_VAB(graph : S*, name : LibC::Char*, vid : IntegerT) : BoolT
+  fun cattribute_vas = igraph_cattribute_VAS(graph : S*, name : LibC::Char*, vid : IntegerT) : LibC::Char*
+  fun cattribute_ean = igraph_cattribute_EAN(graph : S*, name : LibC::Char*, eid : IntegerT) : RealT
+  fun cattribute_eab = igraph_cattribute_EAB(graph : S*, name : LibC::Char*, eid : IntegerT) : BoolT
+  fun cattribute_eas = igraph_cattribute_EAS(graph : S*, name : LibC::Char*, eid : IntegerT) : LibC::Char*
+  fun cattribute_vanv = igraph_cattribute_VANV(graph : S*, name : LibC::Char*, vids : VsT, result : VectorT*) : LibC::Int
+  fun cattribute_eanv = igraph_cattribute_EANV(graph : S*, name : LibC::Char*, eids : EsT, result : VectorT*) : LibC::Int
+  fun cattribute_vasv = igraph_cattribute_VASV(graph : S*, name : LibC::Char*, vids : VsT, result : StrvectorT*) : LibC::Int
+  fun cattribute_easv = igraph_cattribute_EASV(graph : S*, name : LibC::Char*, eids : EsT, result : StrvectorT*) : LibC::Int
+  fun cattribute_vabv = igraph_cattribute_VABV(graph : S*, name : LibC::Char*, vids : VsT, result : VectorBoolT*) : LibC::Int
+  fun cattribute_eabv = igraph_cattribute_EABV(graph : S*, name : LibC::Char*, eids : EsT, result : VectorBoolT*) : LibC::Int
+  fun cattribute_list = igraph_cattribute_list(graph : S*, gnames : StrvectorT*, gtypes : VectorT*, vnames : StrvectorT*, vtypes : VectorT*, enames : StrvectorT*, etypes : VectorT*) : LibC::Int
+  fun cattribute_has_attr = igraph_cattribute_has_attr(graph : S*, type : AttributeElemtypeT, name : LibC::Char*) : BoolT
+  fun cattribute_gan_set = igraph_cattribute_GAN_set(graph : S*, name : LibC::Char*, value : RealT) : LibC::Int
+  fun cattribute_gab_set = igraph_cattribute_GAB_set(graph : S*, name : LibC::Char*, value : BoolT) : LibC::Int
+  fun cattribute_gas_set = igraph_cattribute_GAS_set(graph : S*, name : LibC::Char*, value : LibC::Char*) : LibC::Int
+  fun cattribute_van_set = igraph_cattribute_VAN_set(graph : S*, name : LibC::Char*, vid : IntegerT, value : RealT) : LibC::Int
+  fun cattribute_vab_set = igraph_cattribute_VAB_set(graph : S*, name : LibC::Char*, vid : IntegerT, value : BoolT) : LibC::Int
+  fun cattribute_vas_set = igraph_cattribute_VAS_set(graph : S*, name : LibC::Char*, vid : IntegerT, value : LibC::Char*) : LibC::Int
+  fun cattribute_ean_set = igraph_cattribute_EAN_set(graph : S*, name : LibC::Char*, eid : IntegerT, value : RealT) : LibC::Int
+  fun cattribute_eab_set = igraph_cattribute_EAB_set(graph : S*, name : LibC::Char*, eid : IntegerT, value : BoolT) : LibC::Int
+  fun cattribute_eas_set = igraph_cattribute_EAS_set(graph : S*, name : LibC::Char*, eid : IntegerT, value : LibC::Char*) : LibC::Int
+  fun cattribute_van_setv = igraph_cattribute_VAN_setv(graph : S*, name : LibC::Char*, v : VectorT*) : LibC::Int
+  fun cattribute_vab_setv = igraph_cattribute_VAB_setv(graph : S*, name : LibC::Char*, v : VectorBoolT*) : LibC::Int
+  fun cattribute_vas_setv = igraph_cattribute_VAS_setv(graph : S*, name : LibC::Char*, sv : StrvectorT*) : LibC::Int
+  fun cattribute_ean_setv = igraph_cattribute_EAN_setv(graph : S*, name : LibC::Char*, v : VectorT*) : LibC::Int
+  fun cattribute_eab_setv = igraph_cattribute_EAB_setv(graph : S*, name : LibC::Char*, v : VectorBoolT*) : LibC::Int
+  fun cattribute_eas_setv = igraph_cattribute_EAS_setv(graph : S*, name : LibC::Char*, sv : StrvectorT*) : LibC::Int
+  fun cattribute_remove_g = igraph_cattribute_remove_g(graph : S*, name : LibC::Char*)
+  fun cattribute_remove_v = igraph_cattribute_remove_v(graph : S*, name : LibC::Char*)
+  fun cattribute_remove_e = igraph_cattribute_remove_e(graph : S*, name : LibC::Char*)
+  fun cattribute_remove_all = igraph_cattribute_remove_all(graph : S*, g : BoolT, v : BoolT, e : BoolT)
+  fun are_connected = igraph_are_connected(graph : S*, v1 : IntegerT, v2 : IntegerT, res : BoolT*) : LibC::Int
+  fun minimum_spanning_tree = igraph_minimum_spanning_tree(graph : S*, res : VectorT*, weights : VectorT*) : LibC::Int
+  fun minimum_spanning_tree_unweighted = igraph_minimum_spanning_tree_unweighted(graph : S*, mst : S*) : LibC::Int
+  fun minimum_spanning_tree_prim = igraph_minimum_spanning_tree_prim(graph : S*, mst : S*, weights : VectorT*) : LibC::Int
+  fun subcomponent = igraph_subcomponent(graph : S*, res : VectorT*, vid : RealT, mode : NeimodeT) : LibC::Int
+  fun rewire = igraph_rewire(graph : S*, n : IntegerT, mode : RewiringT) : LibC::Int
   enum RewiringT
     RewiringSimple = 0
     RewiringSimpleLoops = 1
   end
-  fun subgraph = igraph_subgraph(graph : T*, res : T*, vids : VsT) : LibC::Int
-  fun induced_subgraph_map = igraph_induced_subgraph_map(graph : T*, res : T*, vids : VsT, impl : SubgraphImplementationT, map : VectorT*, invmap : VectorT*) : LibC::Int
+  fun subgraph = igraph_subgraph(graph : S*, res : S*, vids : VsT) : LibC::Int
+  fun induced_subgraph_map = igraph_induced_subgraph_map(graph : S*, res : S*, vids : VsT, impl : SubgraphImplementationT, map : VectorT*, invmap : VectorT*) : LibC::Int
   enum SubgraphImplementationT
     SubgraphAuto = 0
     SubgraphCopyAndDelete = 1
     SubgraphCreateFromScratch = 2
   end
-  fun induced_subgraph = igraph_induced_subgraph(graph : T*, res : T*, vids : VsT, impl : SubgraphImplementationT) : LibC::Int
-  fun subgraph_edges = igraph_subgraph_edges(graph : T*, res : T*, eids : EsT, delete_vertices : BoolT) : LibC::Int
-  fun simplify = igraph_simplify(graph : T*, multiple : BoolT, loops : BoolT, edge_comb : AttributeCombinationT*) : LibC::Int
-  fun reciprocity = igraph_reciprocity(graph : T*, res : RealT*, ignore_loops : BoolT, mode : ReciprocityT) : LibC::Int
+  fun induced_subgraph = igraph_induced_subgraph(graph : S*, res : S*, vids : VsT, impl : SubgraphImplementationT) : LibC::Int
+  fun subgraph_edges = igraph_subgraph_edges(graph : S*, res : S*, eids : EsT, delete_vertices : BoolT) : LibC::Int
+  fun simplify = igraph_simplify(graph : S*, multiple : BoolT, loops : BoolT, edge_comb : AttributeCombinationT*) : LibC::Int
+  fun reciprocity = igraph_reciprocity(graph : S*, res : RealT*, ignore_loops : BoolT, mode : ReciprocityT) : LibC::Int
   enum ReciprocityT
     ReciprocityDefault = 0
     ReciprocityRatio = 1
   end
-  fun maxdegree = igraph_maxdegree(graph : T*, res : IntegerT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun density = igraph_density(graph : T*, res : RealT*, loops : BoolT) : LibC::Int
-  fun is_loop = igraph_is_loop(graph : T*, res : VectorBoolT*, es : EsT) : LibC::Int
-  fun is_simple = igraph_is_simple(graph : T*, res : BoolT*) : LibC::Int
-  fun has_multiple = igraph_has_multiple(graph : T*, res : BoolT*) : LibC::Int
-  fun is_multiple = igraph_is_multiple(graph : T*, res : VectorBoolT*, es : EsT) : LibC::Int
-  fun count_multiple = igraph_count_multiple(graph : T*, res : VectorT*, es : EsT) : LibC::Int
-  fun girth = igraph_girth(graph : T*, girth : IntegerT*, circle : VectorT*) : LibC::Int
-  fun add_edge = igraph_add_edge(graph : T*, from : IntegerT, to : IntegerT) : LibC::Int
-  fun unfold_tree = igraph_unfold_tree(graph : T*, tree : T*, mode : NeimodeT, roots : VectorT*, vertex_index : VectorT*) : LibC::Int
-  fun is_mutual = igraph_is_mutual(graph : T*, res : VectorBoolT*, es : EsT) : LibC::Int
-  fun maximum_cardinality_search = igraph_maximum_cardinality_search(graph : T*, alpha : VectorT*, alpham1 : VectorT*) : LibC::Int
-  fun is_chordal = igraph_is_chordal(graph : T*, alpha : VectorT*, alpham1 : VectorT*, chordal : BoolT*, fill_in : VectorT*, newgraph : T*) : LibC::Int
-  fun avg_nearest_neighbor_degree = igraph_avg_nearest_neighbor_degree(graph : T*, vids : VsT, knn : VectorT*, knnk : VectorT*, weights : VectorT*) : LibC::Int
-  fun contract_vertices = igraph_contract_vertices(graph : T*, mapping : VectorT*, vertex_comb : AttributeCombinationT*) : LibC::Int
-  fun transitive_closure_dag = igraph_transitive_closure_dag(graph : T*, closure : T*) : LibC::Int
-  fun feedback_arc_set = igraph_feedback_arc_set(graph : T*, result : VectorT*, weights : VectorT*, algo : FasAlgorithmT) : LibC::Int
+  fun maxdegree = igraph_maxdegree(graph : S*, res : IntegerT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun density = igraph_density(graph : S*, res : RealT*, loops : BoolT) : LibC::Int
+  fun is_loop = igraph_is_loop(graph : S*, res : VectorBoolT*, es : EsT) : LibC::Int
+  fun is_simple = igraph_is_simple(graph : S*, res : BoolT*) : LibC::Int
+  fun has_multiple = igraph_has_multiple(graph : S*, res : BoolT*) : LibC::Int
+  fun is_multiple = igraph_is_multiple(graph : S*, res : VectorBoolT*, es : EsT) : LibC::Int
+  fun count_multiple = igraph_count_multiple(graph : S*, res : VectorT*, es : EsT) : LibC::Int
+  fun girth = igraph_girth(graph : S*, girth : IntegerT*, circle : VectorT*) : LibC::Int
+  fun add_edge = igraph_add_edge(graph : S*, from : IntegerT, to : IntegerT) : LibC::Int
+  fun unfold_tree = igraph_unfold_tree(graph : S*, tree : S*, mode : NeimodeT, roots : VectorT*, vertex_index : VectorT*) : LibC::Int
+  fun is_mutual = igraph_is_mutual(graph : S*, res : VectorBoolT*, es : EsT) : LibC::Int
+  fun maximum_cardinality_search = igraph_maximum_cardinality_search(graph : S*, alpha : VectorT*, alpham1 : VectorT*) : LibC::Int
+  fun is_chordal = igraph_is_chordal(graph : S*, alpha : VectorT*, alpham1 : VectorT*, chordal : BoolT*, fill_in : VectorT*, newgraph : S*) : LibC::Int
+  fun avg_nearest_neighbor_degree = igraph_avg_nearest_neighbor_degree(graph : S*, vids : VsT, knn : VectorT*, knnk : VectorT*, weights : VectorT*) : LibC::Int
+  fun contract_vertices = igraph_contract_vertices(graph : S*, mapping : VectorT*, vertex_comb : AttributeCombinationT*) : LibC::Int
+  fun transitive_closure_dag = igraph_transitive_closure_dag(graph : S*, closure : S*) : LibC::Int
+  fun feedback_arc_set = igraph_feedback_arc_set(graph : S*, result : VectorT*, weights : VectorT*, algo : FasAlgorithmT) : LibC::Int
   enum FasAlgorithmT
     FasExactIp = 0
     FasApproxEades = 1
   end
-  fun diversity = igraph_diversity(graph : T*, weights : VectorT*, res : VectorT*, vs : VsT) : LibC::Int
-  fun laplacian = igraph_laplacian(graph : T*, res : MatrixT*, sparseres : SparsematT*, normalized : BoolT, weights : VectorT*) : LibC::Int
-  fun i_feedback_arc_set_undirected = igraph_i_feedback_arc_set_undirected(graph : T*, result : VectorT*, weights : VectorT*, layering : VectorT*) : LibC::Int
-  fun i_feedback_arc_set_eades = igraph_i_feedback_arc_set_eades(graph : T*, result : VectorT*, weights : VectorT*, layering : VectorT*) : LibC::Int
-  fun transitivity_undirected = igraph_transitivity_undirected(graph : T*, res : RealT*, mode : TransitivityModeT) : LibC::Int
+  fun diversity = igraph_diversity(graph : S*, weights : VectorT*, res : VectorT*, vs : VsT) : LibC::Int
+  fun laplacian = igraph_laplacian(graph : S*, res : MatrixT*, sparseres : SparsematT*, normalized : BoolT, weights : VectorT*) : LibC::Int
+  fun i_feedback_arc_set_undirected = igraph_i_feedback_arc_set_undirected(graph : S*, result : VectorT*, weights : VectorT*, layering : VectorT*) : LibC::Int
+  fun i_feedback_arc_set_eades = igraph_i_feedback_arc_set_eades(graph : S*, result : VectorT*, weights : VectorT*, layering : VectorT*) : LibC::Int
+  fun transitivity_undirected = igraph_transitivity_undirected(graph : S*, res : RealT*, mode : TransitivityModeT) : LibC::Int
   enum TransitivityModeT
     TransitivityNan = 0
     TransitivityZero = 1
   end
-  fun transitivity_local_undirected = igraph_transitivity_local_undirected(graph : T*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
-  fun transitivity_local_undirected1 = igraph_transitivity_local_undirected1(graph : T*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
-  fun transitivity_local_undirected2 = igraph_transitivity_local_undirected2(graph : T*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
-  fun transitivity_local_undirected4 = igraph_transitivity_local_undirected4(graph : T*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
-  fun transitivity_avglocal_undirected = igraph_transitivity_avglocal_undirected(graph : T*, res : RealT*, mode : TransitivityModeT) : LibC::Int
-  fun transitivity_barrat = igraph_transitivity_barrat(graph : T*, res : VectorT*, vids : VsT, weights : VectorT*, mode : TransitivityModeT) : LibC::Int
-  fun neighborhood_size = igraph_neighborhood_size(graph : T*, res : VectorT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
-  fun neighborhood = igraph_neighborhood(graph : T*, res : VectorPtrT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
-  fun neighborhood_graphs = igraph_neighborhood_graphs(graph : T*, res : VectorPtrT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
+  fun transitivity_local_undirected = igraph_transitivity_local_undirected(graph : S*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
+  fun transitivity_local_undirected1 = igraph_transitivity_local_undirected1(graph : S*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
+  fun transitivity_local_undirected2 = igraph_transitivity_local_undirected2(graph : S*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
+  fun transitivity_local_undirected4 = igraph_transitivity_local_undirected4(graph : S*, res : VectorT*, vids : VsT, mode : TransitivityModeT) : LibC::Int
+  fun transitivity_avglocal_undirected = igraph_transitivity_avglocal_undirected(graph : S*, res : RealT*, mode : TransitivityModeT) : LibC::Int
+  fun transitivity_barrat = igraph_transitivity_barrat(graph : S*, res : VectorT*, vids : VsT, weights : VectorT*, mode : TransitivityModeT) : LibC::Int
+  fun neighborhood_size = igraph_neighborhood_size(graph : S*, res : VectorT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
+  fun neighborhood = igraph_neighborhood(graph : S*, res : VectorPtrT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
+  fun neighborhood_graphs = igraph_neighborhood_graphs(graph : S*, res : VectorPtrT*, vids : VsT, order : IntegerT, mode : NeimodeT) : LibC::Int
   fun is_degree_sequence = igraph_is_degree_sequence(out_degrees : VectorT*, in_degrees : VectorT*, res : BoolT*) : LibC::Int
   fun is_graphical_degree_sequence = igraph_is_graphical_degree_sequence(out_degrees : VectorT*, in_degrees : VectorT*, res : BoolT*) : LibC::Int
-  fun topological_sorting = igraph_topological_sorting(graph : T*, res : VectorT*, mode : NeimodeT) : LibC::Int
-  fun is_dag = igraph_is_dag(graph : T*, res : BoolT*) : LibC::Int
-  fun transitive_closure_dag = igraph_transitive_closure_dag(graph : T*, closure : T*) : LibC::Int
-  fun permute_vertices = igraph_permute_vertices(graph : T*, res : T*, permutation : VectorT*) : LibC::Int
-  fun isomorphic = igraph_isomorphic(graph1 : T*, graph2 : T*, iso : BoolT*) : LibC::Int
-  fun subisomorphic = igraph_subisomorphic(graph1 : T*, graph2 : T*, iso : BoolT*) : LibC::Int
-  fun subisomorphic_lad = igraph_subisomorphic_lad(pattern : T*, target : T*, domains : VectorPtrT*, iso : BoolT*, map : VectorT*, maps : VectorPtrT*, induced : BoolT, time_limit : LibC::Int) : LibC::Int
-  fun isomorphic_vf2 = igraph_isomorphic_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun isomorphic_function_vf2 = igraph_isomorphic_function_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, map12 : VectorT*, map21 : VectorT*, isohandler_fn : VectorT*, VectorT*, Void* -> BoolT, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun count_isomorphisms_vf2 = igraph_count_isomorphisms_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, count : IntegerT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun get_isomorphisms_vf2 = igraph_get_isomorphisms_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, maps : VectorPtrT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun subisomorphic_vf2 = igraph_subisomorphic_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun subisomorphic_function_vf2 = igraph_subisomorphic_function_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, map12 : VectorT*, map21 : VectorT*, isohandler_fn : VectorT*, VectorT*, Void* -> BoolT, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun count_subisomorphisms_vf2 = igraph_count_subisomorphisms_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, count : IntegerT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
-  fun get_subisomorphisms_vf2 = igraph_get_subisomorphisms_vf2(graph1 : T*, graph2 : T*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, maps : VectorPtrT*, node_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : T*, T*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun topological_sorting = igraph_topological_sorting(graph : S*, res : VectorT*, mode : NeimodeT) : LibC::Int
+  fun is_dag = igraph_is_dag(graph : S*, res : BoolT*) : LibC::Int
+  fun transitive_closure_dag = igraph_transitive_closure_dag(graph : S*, closure : S*) : LibC::Int
+  fun permute_vertices = igraph_permute_vertices(graph : S*, res : S*, permutation : VectorT*) : LibC::Int
+  fun isomorphic = igraph_isomorphic(graph1 : S*, graph2 : S*, iso : BoolT*) : LibC::Int
+  fun subisomorphic = igraph_subisomorphic(graph1 : S*, graph2 : S*, iso : BoolT*) : LibC::Int
+  fun subisomorphic_lad = igraph_subisomorphic_lad(pattern : S*, target : S*, domains : VectorPtrT*, iso : BoolT*, map : VectorT*, maps : VectorPtrT*, induced : BoolT, time_limit : LibC::Int) : LibC::Int
+  fun isomorphic_vf2 = igraph_isomorphic_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun isomorphic_function_vf2 = igraph_isomorphic_function_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, map12 : VectorT*, map21 : VectorT*, isohandler_fn : VectorT*, VectorT*, Void* -> BoolT, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun count_isomorphisms_vf2 = igraph_count_isomorphisms_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, count : IntegerT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun get_isomorphisms_vf2 = igraph_get_isomorphisms_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, maps : VectorPtrT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun subisomorphic_vf2 = igraph_subisomorphic_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun subisomorphic_function_vf2 = igraph_subisomorphic_function_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, map12 : VectorT*, map21 : VectorT*, isohandler_fn : VectorT*, VectorT*, Void* -> BoolT, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun count_subisomorphisms_vf2 = igraph_count_subisomorphisms_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, count : IntegerT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
+  fun get_subisomorphisms_vf2 = igraph_get_subisomorphisms_vf2(graph1 : S*, graph2 : S*, vertex_color1 : VectorIntT*, vertex_color2 : VectorIntT*, edge_color1 : VectorIntT*, edge_color2 : VectorIntT*, maps : VectorPtrT*, node_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, edge_compat_fn : S*, S*, IntegerT, IntegerT, Void* -> BoolT, arg : Void*) : LibC::Int
   struct BlissInfoT
     nof_nodes : LibC::ULong
     nof_leaf_nodes : LibC::ULong
@@ -2461,7 +2460,7 @@ lib IGraph
   BlissFm = 3
   BlissFlm = 4
   BlissFsm = 5
-  fun canonical_permutation = igraph_canonical_permutation(graph : T*, labeling : VectorT*, sh : BlissShT, info : BlissInfoT*) : LibC::Int
+  fun canonical_permutation = igraph_canonical_permutation(graph : S*, labeling : VectorT*, sh : BlissShT, info : BlissInfoT*) : LibC::Int
   enum BlissShT
     BlissF = 0
     BlissFl = 1
@@ -2470,53 +2469,53 @@ lib IGraph
     BlissFlm = 4
     BlissFsm = 5
   end
-  fun isomorphic_bliss = igraph_isomorphic_bliss(graph1 : T*, graph2 : T*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, sh1 : BlissShT, sh2 : BlissShT, info1 : BlissInfoT*, info2 : BlissInfoT*) : LibC::Int
-  fun automorphisms = igraph_automorphisms(graph : T*, sh : BlissShT, info : BlissInfoT*) : LibC::Int
-  fun isomorphic_34 = igraph_isomorphic_34(graph1 : T*, graph2 : T*, iso : BoolT*) : LibC::Int
-  fun isoclass = igraph_isoclass(graph : T*, isoclass : IntegerT*) : LibC::Int
-  fun isoclass_subgraph = igraph_isoclass_subgraph(graph : T*, vids : VectorT*, isoclass : IntegerT*) : LibC::Int
-  fun isoclass_create = igraph_isoclass_create(graph : T*, size : IntegerT, number : IntegerT, directed : BoolT) : LibC::Int
-  fun full_bipartite = igraph_full_bipartite(graph : T*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
-  fun create_bipartite = igraph_create_bipartite(g : T*, types : VectorBoolT*, edges : VectorT*, directed : BoolT) : LibC::Int
-  fun bipartite_projection_size = igraph_bipartite_projection_size(graph : T*, types : VectorBoolT*, vcount1 : IntegerT*, ecount1 : IntegerT*, vcount2 : IntegerT*, ecount2 : IntegerT*) : LibC::Int
-  fun bipartite_projection = igraph_bipartite_projection(graph : T*, types : VectorBoolT*, proj1 : T*, proj2 : T*, multiplicity1 : VectorT*, multiplicity2 : VectorT*, probe1 : IntegerT) : LibC::Int
-  fun incidence = igraph_incidence(graph : T*, types : VectorBoolT*, incidence : MatrixT*, directed : BoolT, mode : NeimodeT, multiple : BoolT) : LibC::Int
-  fun get_incidence = igraph_get_incidence(graph : T*, types : VectorBoolT*, res : MatrixT*, row_ids : VectorT*, col_ids : VectorT*) : LibC::Int
-  fun is_bipartite = igraph_is_bipartite(graph : T*, res : BoolT*, type : VectorBoolT*) : LibC::Int
-  fun bipartite_game = igraph_bipartite_game(graph : T*, types : VectorBoolT*, type : ErdosRenyiT, n1 : IntegerT, n2 : IntegerT, p : RealT, m : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
-  fun bipartite_game_gnp = igraph_bipartite_game_gnp(graph : T*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, p : RealT, directed : BoolT, mode : NeimodeT) : LibC::Int
-  fun bipartite_game_gnm = igraph_bipartite_game_gnm(graph : T*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, m : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
-  fun maximal_cliques = igraph_maximal_cliques(graph : T*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun maximal_cliques_file = igraph_maximal_cliques_file(graph : T*, outfile : File*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun maximal_cliques_count = igraph_maximal_cliques_count(graph : T*, res : IntegerT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun maximal_cliques_subset = igraph_maximal_cliques_subset(graph : T*, subset : VectorIntT*, res : VectorPtrT*, no : IntegerT*, outfile : File*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun cliques = igraph_cliques(graph : T*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun largest_cliques = igraph_largest_cliques(graph : T*, cliques : VectorPtrT*) : LibC::Int
-  fun clique_number = igraph_clique_number(graph : T*, no : IntegerT*) : LibC::Int
-  fun independent_vertex_sets = igraph_independent_vertex_sets(graph : T*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
-  fun largest_independent_vertex_sets = igraph_largest_independent_vertex_sets(graph : T*, res : VectorPtrT*) : LibC::Int
-  fun maximal_independent_vertex_sets = igraph_maximal_independent_vertex_sets(graph : T*, res : VectorPtrT*) : LibC::Int
-  fun independence_number = igraph_independence_number(graph : T*, no : IntegerT*) : LibC::Int
-  fun layout_random = igraph_layout_random(graph : T*, res : MatrixT*) : LibC::Int
-  fun layout_circle = igraph_layout_circle(graph : T*, res : MatrixT*) : LibC::Int
-  fun layout_star = igraph_layout_star(graph : T*, res : MatrixT*, center : IntegerT, order : VectorT*) : LibC::Int
-  fun layout_grid = igraph_layout_grid(graph : T*, res : MatrixT*, width : LibC::Long) : LibC::Int
-  fun layout_fruchterman_reingold = igraph_layout_fruchterman_reingold(graph : T*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, use_seed : BoolT, weight : VectorT*, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*) : LibC::Int
-  fun layout_grid_fruchterman_reingold = igraph_layout_grid_fruchterman_reingold(graph : T*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, cellsize : RealT, use_seed : BoolT, weight : VectorT*) : LibC::Int
-  fun layout_kamada_kawai = igraph_layout_kamada_kawai(graph : T*, res : MatrixT*, niter : IntegerT, sigma : RealT, initemp : RealT, coolexp : RealT, kkconst : RealT, use_seed : BoolT, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*) : LibC::Int
-  fun layout_springs = igraph_layout_springs(graph : T*, res : MatrixT*, mass : RealT, equil : RealT, k : RealT, repeqdis : RealT, kfr : RealT, repulse : BoolT) : LibC::Int
-  fun layout_lgl = igraph_layout_lgl(graph : T*, res : MatrixT*, maxiter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, cellsize : RealT, root : IntegerT) : LibC::Int
-  fun layout_reingold_tilford = igraph_layout_reingold_tilford(graph : T*, res : MatrixT*, mode : NeimodeT, roots : VectorT*, rootlevel : VectorT*) : LibC::Int
-  fun layout_reingold_tilford_circular = igraph_layout_reingold_tilford_circular(graph : T*, res : MatrixT*, mode : NeimodeT, roots : VectorT*, rootlevel : VectorT*) : LibC::Int
-  fun layout_sugiyama = igraph_layout_sugiyama(graph : T*, res : MatrixT*, extd_graph : T*, extd_to_orig_eids : VectorT*, layers : VectorT*, hgap : RealT, vgap : RealT, maxiter : LibC::Long, weights : VectorT*) : LibC::Int
-  fun layout_random_3d = igraph_layout_random_3d(graph : T*, res : MatrixT*) : LibC::Int
-  fun layout_sphere = igraph_layout_sphere(graph : T*, res : MatrixT*) : LibC::Int
-  fun layout_grid_3d = igraph_layout_grid_3d(graph : T*, res : MatrixT*, width : LibC::Long, height : LibC::Long) : LibC::Int
-  fun layout_fruchterman_reingold_3d = igraph_layout_fruchterman_reingold_3d(graph : T*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, volume : RealT, coolexp : RealT, repulserad : RealT, use_seed : BoolT, weight : VectorT*, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*, minz : VectorT*, maxz : VectorT*) : LibC::Int
-  fun layout_kamada_kawai_3d = igraph_layout_kamada_kawai_3d(graph : T*, res : MatrixT*, niter : IntegerT, sigma : RealT, initemp : RealT, coolexp : RealT, kkconst : RealT, use_seed : BoolT, fixz : BoolT, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*, minz : VectorT*, maxz : VectorT*) : LibC::Int
-  fun layout_graphopt = igraph_layout_graphopt(graph : T*, res : MatrixT*, niter : IntegerT, node_charge : RealT, node_mass : RealT, spring_length : RealT, spring_constant : RealT, max_sa_movement : RealT, use_seed : BoolT) : LibC::Int
-  fun layout_mds = igraph_layout_mds(graph : T*, res : MatrixT*, dist : MatrixT*, dim : LibC::Long, options : ArpackOptionsT*) : LibC::Int
-  fun layout_bipartite = igraph_layout_bipartite(graph : T*, types : VectorBoolT*, res : MatrixT*, hgap : RealT, vgap : RealT, maxiter : LibC::Long) : LibC::Int
+  fun isomorphic_bliss = igraph_isomorphic_bliss(graph1 : S*, graph2 : S*, iso : BoolT*, map12 : VectorT*, map21 : VectorT*, sh1 : BlissShT, sh2 : BlissShT, info1 : BlissInfoT*, info2 : BlissInfoT*) : LibC::Int
+  fun automorphisms = igraph_automorphisms(graph : S*, sh : BlissShT, info : BlissInfoT*) : LibC::Int
+  fun isomorphic_34 = igraph_isomorphic_34(graph1 : S*, graph2 : S*, iso : BoolT*) : LibC::Int
+  fun isoclass = igraph_isoclass(graph : S*, isoclass : IntegerT*) : LibC::Int
+  fun isoclass_subgraph = igraph_isoclass_subgraph(graph : S*, vids : VectorT*, isoclass : IntegerT*) : LibC::Int
+  fun isoclass_create = igraph_isoclass_create(graph : S*, size : IntegerT, number : IntegerT, directed : BoolT) : LibC::Int
+  fun full_bipartite = igraph_full_bipartite(graph : S*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
+  fun create_bipartite = igraph_create_bipartite(g : S*, types : VectorBoolT*, edges : VectorT*, directed : BoolT) : LibC::Int
+  fun bipartite_projection_size = igraph_bipartite_projection_size(graph : S*, types : VectorBoolT*, vcount1 : IntegerT*, ecount1 : IntegerT*, vcount2 : IntegerT*, ecount2 : IntegerT*) : LibC::Int
+  fun bipartite_projection = igraph_bipartite_projection(graph : S*, types : VectorBoolT*, proj1 : S*, proj2 : S*, multiplicity1 : VectorT*, multiplicity2 : VectorT*, probe1 : IntegerT) : LibC::Int
+  fun incidence = igraph_incidence(graph : S*, types : VectorBoolT*, incidence : MatrixT*, directed : BoolT, mode : NeimodeT, multiple : BoolT) : LibC::Int
+  fun get_incidence = igraph_get_incidence(graph : S*, types : VectorBoolT*, res : MatrixT*, row_ids : VectorT*, col_ids : VectorT*) : LibC::Int
+  fun is_bipartite = igraph_is_bipartite(graph : S*, res : BoolT*, type : VectorBoolT*) : LibC::Int
+  fun bipartite_game = igraph_bipartite_game(graph : S*, types : VectorBoolT*, type : ErdosRenyiT, n1 : IntegerT, n2 : IntegerT, p : RealT, m : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
+  fun bipartite_game_gnp = igraph_bipartite_game_gnp(graph : S*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, p : RealT, directed : BoolT, mode : NeimodeT) : LibC::Int
+  fun bipartite_game_gnm = igraph_bipartite_game_gnm(graph : S*, types : VectorBoolT*, n1 : IntegerT, n2 : IntegerT, m : IntegerT, directed : BoolT, mode : NeimodeT) : LibC::Int
+  fun maximal_cliques = igraph_maximal_cliques(graph : S*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun maximal_cliques_file = igraph_maximal_cliques_file(graph : S*, outfile : File*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun maximal_cliques_count = igraph_maximal_cliques_count(graph : S*, res : IntegerT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun maximal_cliques_subset = igraph_maximal_cliques_subset(graph : S*, subset : VectorIntT*, res : VectorPtrT*, no : IntegerT*, outfile : File*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun cliques = igraph_cliques(graph : S*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun largest_cliques = igraph_largest_cliques(graph : S*, cliques : VectorPtrT*) : LibC::Int
+  fun clique_number = igraph_clique_number(graph : S*, no : IntegerT*) : LibC::Int
+  fun independent_vertex_sets = igraph_independent_vertex_sets(graph : S*, res : VectorPtrT*, min_size : IntegerT, max_size : IntegerT) : LibC::Int
+  fun largest_independent_vertex_sets = igraph_largest_independent_vertex_sets(graph : S*, res : VectorPtrT*) : LibC::Int
+  fun maximal_independent_vertex_sets = igraph_maximal_independent_vertex_sets(graph : S*, res : VectorPtrT*) : LibC::Int
+  fun independence_number = igraph_independence_number(graph : S*, no : IntegerT*) : LibC::Int
+  fun layout_random = igraph_layout_random(graph : S*, res : MatrixT*) : LibC::Int
+  fun layout_circle = igraph_layout_circle(graph : S*, res : MatrixT*) : LibC::Int
+  fun layout_star = igraph_layout_star(graph : S*, res : MatrixT*, center : IntegerT, order : VectorT*) : LibC::Int
+  fun layout_grid = igraph_layout_grid(graph : S*, res : MatrixT*, width : LibC::Long) : LibC::Int
+  fun layout_fruchterman_reingold = igraph_layout_fruchterman_reingold(graph : S*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, use_seed : BoolT, weight : VectorT*, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*) : LibC::Int
+  fun layout_grid_fruchterman_reingold = igraph_layout_grid_fruchterman_reingold(graph : S*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, cellsize : RealT, use_seed : BoolT, weight : VectorT*) : LibC::Int
+  fun layout_kamada_kawai = igraph_layout_kamada_kawai(graph : S*, res : MatrixT*, niter : IntegerT, sigma : RealT, initemp : RealT, coolexp : RealT, kkconst : RealT, use_seed : BoolT, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*) : LibC::Int
+  fun layout_springs = igraph_layout_springs(graph : S*, res : MatrixT*, mass : RealT, equil : RealT, k : RealT, repeqdis : RealT, kfr : RealT, repulse : BoolT) : LibC::Int
+  fun layout_lgl = igraph_layout_lgl(graph : S*, res : MatrixT*, maxiter : IntegerT, maxdelta : RealT, area : RealT, coolexp : RealT, repulserad : RealT, cellsize : RealT, root : IntegerT) : LibC::Int
+  fun layout_reingold_tilford = igraph_layout_reingold_tilford(graph : S*, res : MatrixT*, mode : NeimodeT, roots : VectorT*, rootlevel : VectorT*) : LibC::Int
+  fun layout_reingold_tilford_circular = igraph_layout_reingold_tilford_circular(graph : S*, res : MatrixT*, mode : NeimodeT, roots : VectorT*, rootlevel : VectorT*) : LibC::Int
+  fun layout_sugiyama = igraph_layout_sugiyama(graph : S*, res : MatrixT*, extd_graph : S*, extd_to_orig_eids : VectorT*, layers : VectorT*, hgap : RealT, vgap : RealT, maxiter : LibC::Long, weights : VectorT*) : LibC::Int
+  fun layout_random_3d = igraph_layout_random_3d(graph : S*, res : MatrixT*) : LibC::Int
+  fun layout_sphere = igraph_layout_sphere(graph : S*, res : MatrixT*) : LibC::Int
+  fun layout_grid_3d = igraph_layout_grid_3d(graph : S*, res : MatrixT*, width : LibC::Long, height : LibC::Long) : LibC::Int
+  fun layout_fruchterman_reingold_3d = igraph_layout_fruchterman_reingold_3d(graph : S*, res : MatrixT*, niter : IntegerT, maxdelta : RealT, volume : RealT, coolexp : RealT, repulserad : RealT, use_seed : BoolT, weight : VectorT*, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*, minz : VectorT*, maxz : VectorT*) : LibC::Int
+  fun layout_kamada_kawai_3d = igraph_layout_kamada_kawai_3d(graph : S*, res : MatrixT*, niter : IntegerT, sigma : RealT, initemp : RealT, coolexp : RealT, kkconst : RealT, use_seed : BoolT, fixz : BoolT, minx : VectorT*, maxx : VectorT*, miny : VectorT*, maxy : VectorT*, minz : VectorT*, maxz : VectorT*) : LibC::Int
+  fun layout_graphopt = igraph_layout_graphopt(graph : S*, res : MatrixT*, niter : IntegerT, node_charge : RealT, node_mass : RealT, spring_length : RealT, spring_constant : RealT, max_sa_movement : RealT, use_seed : BoolT) : LibC::Int
+  fun layout_mds = igraph_layout_mds(graph : S*, res : MatrixT*, dist : MatrixT*, dim : LibC::Long, options : ArpackOptionsT*) : LibC::Int
+  fun layout_bipartite = igraph_layout_bipartite(graph : S*, types : VectorBoolT*, res : MatrixT*, hgap : RealT, vgap : RealT, maxiter : LibC::Long) : LibC::Int
   struct LayoutDrlOptionsT
     edge_cut : RealT
     init_iterations : IntegerT
@@ -2557,15 +2556,15 @@ lib IGraph
     LayoutDrlRefine = 3
     LayoutDrlFinal = 4
   end
-  fun layout_drl = igraph_layout_drl(graph : T*, res : MatrixT*, use_seed : BoolT, options : LayoutDrlOptionsT*, weights : VectorT*, fixed : VectorBoolT*) : LibC::Int
-  fun layout_drl_3d = igraph_layout_drl_3d(graph : T*, res : MatrixT*, use_seed : BoolT, options : LayoutDrlOptionsT*, weights : VectorT*, fixed : VectorBoolT*) : LibC::Int
+  fun layout_drl = igraph_layout_drl(graph : S*, res : MatrixT*, use_seed : BoolT, options : LayoutDrlOptionsT*, weights : VectorT*, fixed : VectorBoolT*) : LibC::Int
+  fun layout_drl_3d = igraph_layout_drl_3d(graph : S*, res : MatrixT*, use_seed : BoolT, options : LayoutDrlOptionsT*, weights : VectorT*, fixed : VectorBoolT*) : LibC::Int
   fun layout_merge_dla = igraph_layout_merge_dla(graphs : VectorPtrT*, coords : VectorPtrT*, res : MatrixT*) : LibC::Int
-  fun bfs = igraph_bfs(graph : T*, root : IntegerT, roots : VectorT*, mode : NeimodeT, unreachable : BoolT, restricted : VectorT*, order : VectorT*, rank : VectorT*, father : VectorT*, pred : VectorT*, succ : VectorT*, dist : VectorT*, callback : T*, IntegerT, IntegerT, IntegerT, IntegerT, IntegerT, Void* -> BoolT, extra : Void*) : LibC::Int
-  fun i_bfs = igraph_i_bfs(graph : T*, vid : IntegerT, mode : NeimodeT, vids : VectorT*, layers : VectorT*, parents : VectorT*) : LibC::Int
-  fun dfs = igraph_dfs(graph : T*, root : IntegerT, mode : NeimodeT, unreachable : BoolT, order : VectorT*, order_out : VectorT*, father : VectorT*, dist : VectorT*, in_callback : T*, IntegerT, IntegerT, Void* -> BoolT, out_callback : T*, IntegerT, IntegerT, Void* -> BoolT, extra : Void*) : LibC::Int
-  fun coreness = igraph_coreness(graph : T*, cores : VectorT*, mode : NeimodeT) : LibC::Int
-  fun community_optimal_modularity = igraph_community_optimal_modularity(graph : T*, modularity : RealT*, membership : VectorT*, weights : VectorT*) : LibC::Int
-  fun community_spinglass = igraph_community_spinglass(graph : T*, weights : VectorT*, modularity : RealT*, temperature : RealT*, membership : VectorT*, csize : VectorT*, spins : IntegerT, parupdate : BoolT, starttemp : RealT, stoptemp : RealT, coolfact : RealT, update_rule : SpincommUpdateT, gamma : RealT, implementation : SpinglassImplementationT, lambda : RealT) : LibC::Int
+  fun bfs = igraph_bfs(graph : S*, root : IntegerT, roots : VectorT*, mode : NeimodeT, unreachable : BoolT, restricted : VectorT*, order : VectorT*, rank : VectorT*, father : VectorT*, pred : VectorT*, succ : VectorT*, dist : VectorT*, callback : S*, IntegerT, IntegerT, IntegerT, IntegerT, IntegerT, Void* -> BoolT, extra : Void*) : LibC::Int
+  fun i_bfs = igraph_i_bfs(graph : S*, vid : IntegerT, mode : NeimodeT, vids : VectorT*, layers : VectorT*, parents : VectorT*) : LibC::Int
+  fun dfs = igraph_dfs(graph : S*, root : IntegerT, mode : NeimodeT, unreachable : BoolT, order : VectorT*, order_out : VectorT*, father : VectorT*, dist : VectorT*, in_callback : S*, IntegerT, IntegerT, Void* -> BoolT, out_callback : S*, IntegerT, IntegerT, Void* -> BoolT, extra : Void*) : LibC::Int
+  fun coreness = igraph_coreness(graph : S*, cores : VectorT*, mode : NeimodeT) : LibC::Int
+  fun community_optimal_modularity = igraph_community_optimal_modularity(graph : S*, modularity : RealT*, membership : VectorT*, weights : VectorT*) : LibC::Int
+  fun community_spinglass = igraph_community_spinglass(graph : S*, weights : VectorT*, modularity : RealT*, temperature : RealT*, membership : VectorT*, csize : VectorT*, spins : IntegerT, parupdate : BoolT, starttemp : RealT, stoptemp : RealT, coolfact : RealT, update_rule : SpincommUpdateT, gamma : RealT, implementation : SpinglassImplementationT, lambda : RealT) : LibC::Int
   enum SpincommUpdateT
     SpincommUpdateSimple = 0
     SpincommUpdateConfig = 1
@@ -2574,24 +2573,24 @@ lib IGraph
     SpincommImpOrig = 0
     SpincommImpNeg = 1
   end
-  fun community_spinglass_single = igraph_community_spinglass_single(graph : T*, weights : VectorT*, vertex : IntegerT, community : VectorT*, cohesion : RealT*, adhesion : RealT*, inner_links : IntegerT*, outer_links : IntegerT*, spins : IntegerT, update_rule : SpincommUpdateT, gamma : RealT) : LibC::Int
-  fun community_walktrap = igraph_community_walktrap(graph : T*, weights : VectorT*, steps : LibC::Int, merges : MatrixT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
-  fun community_infomap = igraph_community_infomap(graph : T*, e_weights : VectorT*, v_weights : VectorT*, nb_trials : LibC::Int, membership : VectorT*, codelength : RealT*) : LibC::Int
-  fun community_edge_betweenness = igraph_community_edge_betweenness(graph : T*, result : VectorT*, edge_betweenness : VectorT*, merges : MatrixT*, bridges : VectorT*, modularity : VectorT*, membership : VectorT*, directed : BoolT, weights : VectorT*) : LibC::Int
-  fun community_eb_get_merges = igraph_community_eb_get_merges(graph : T*, edges : VectorT*, weights : VectorT*, merges : MatrixT*, bridges : VectorT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
-  fun community_fastgreedy = igraph_community_fastgreedy(graph : T*, weights : VectorT*, merges : MatrixT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
+  fun community_spinglass_single = igraph_community_spinglass_single(graph : S*, weights : VectorT*, vertex : IntegerT, community : VectorT*, cohesion : RealT*, adhesion : RealT*, inner_links : IntegerT*, outer_links : IntegerT*, spins : IntegerT, update_rule : SpincommUpdateT, gamma : RealT) : LibC::Int
+  fun community_walktrap = igraph_community_walktrap(graph : S*, weights : VectorT*, steps : LibC::Int, merges : MatrixT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
+  fun community_infomap = igraph_community_infomap(graph : S*, e_weights : VectorT*, v_weights : VectorT*, nb_trials : LibC::Int, membership : VectorT*, codelength : RealT*) : LibC::Int
+  fun community_edge_betweenness = igraph_community_edge_betweenness(graph : S*, result : VectorT*, edge_betweenness : VectorT*, merges : MatrixT*, bridges : VectorT*, modularity : VectorT*, membership : VectorT*, directed : BoolT, weights : VectorT*) : LibC::Int
+  fun community_eb_get_merges = igraph_community_eb_get_merges(graph : S*, edges : VectorT*, weights : VectorT*, merges : MatrixT*, bridges : VectorT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
+  fun community_fastgreedy = igraph_community_fastgreedy(graph : S*, weights : VectorT*, merges : MatrixT*, modularity : VectorT*, membership : VectorT*) : LibC::Int
   fun community_to_membership = igraph_community_to_membership(merges : MatrixT*, nodes : IntegerT, steps : IntegerT, membership : VectorT*, csize : VectorT*) : LibC::Int
   fun le_community_to_membership = igraph_le_community_to_membership(merges : MatrixT*, steps : IntegerT, membership : VectorT*, csize : VectorT*) : LibC::Int
-  fun modularity = igraph_modularity(graph : T*, membership : VectorT*, modularity : RealT*, weights : VectorT*) : LibC::Int
-  fun modularity_matrix = igraph_modularity_matrix(graph : T*, membership : VectorT*, modmat : MatrixT*, weights : VectorT*) : LibC::Int
+  fun modularity = igraph_modularity(graph : S*, membership : VectorT*, modularity : RealT*, weights : VectorT*) : LibC::Int
+  fun modularity_matrix = igraph_modularity_matrix(graph : S*, membership : VectorT*, modmat : MatrixT*, weights : VectorT*) : LibC::Int
   fun reindex_membership = igraph_reindex_membership(membership : VectorT*, new_to_old : VectorT*) : LibC::Int
   LevcHistSplit = 1
   LevcHistFailed = 2
   LevcHistStartFull = 3
   LevcHistStartGiven = 4
-  fun community_leading_eigenvector = igraph_community_leading_eigenvector(graph : T*, weights : VectorT*, merges : MatrixT*, membership : VectorT*, steps : IntegerT, options : ArpackOptionsT*, modularity : RealT*, start : BoolT, eigenvalues : VectorT*, eigenvectors : VectorPtrT*, history : VectorT*, callback : VectorT*, LibC::Long, RealT, VectorT*, RealT*, RealT*, LibC::Int, Void* -> LibC::Int, Void*, Void* -> LibC::Int, callback_extra : Void*) : LibC::Int
-  fun community_label_propagation = igraph_community_label_propagation(graph : T*, membership : VectorT*, weights : VectorT*, initial : VectorT*, fixed : VectorBoolT*, modularity : RealT*) : LibC::Int
-  fun community_multilevel = igraph_community_multilevel(graph : T*, weights : VectorT*, membership : VectorT*, memberships : MatrixT*, modularity : VectorT*) : LibC::Int
+  fun community_leading_eigenvector = igraph_community_leading_eigenvector(graph : S*, weights : VectorT*, merges : MatrixT*, membership : VectorT*, steps : IntegerT, options : ArpackOptionsT*, modularity : RealT*, start : BoolT, eigenvalues : VectorT*, eigenvectors : VectorPtrT*, history : VectorT*, callback : VectorT*, LibC::Long, RealT, VectorT*, RealT*, RealT*, LibC::Int, Void* -> LibC::Int, Void*, Void* -> LibC::Int, callback_extra : Void*) : LibC::Int
+  fun community_label_propagation = igraph_community_label_propagation(graph : S*, membership : VectorT*, weights : VectorT*, initial : VectorT*, fixed : VectorBoolT*, modularity : RealT*) : LibC::Int
+  fun community_multilevel = igraph_community_multilevel(graph : S*, weights : VectorT*, membership : VectorT*, memberships : MatrixT*, modularity : VectorT*) : LibC::Int
   fun compare_communities = igraph_compare_communities(comm1 : VectorT*, comm2 : VectorT*, result : RealT*, method : CommunityComparisonT) : LibC::Int
   enum CommunityComparisonT
     CommcmpVi = 0
@@ -2601,68 +2600,68 @@ lib IGraph
     CommcmpAdjustedRand = 4
   end
   fun split_join_distance = igraph_split_join_distance(comm1 : VectorT*, comm2 : VectorT*, distance12 : IntegerT*, distance21 : IntegerT*) : LibC::Int
-  fun get_adjacency = igraph_get_adjacency(graph : T*, res : MatrixT*, type : GetAdjacencyT, eids : BoolT) : LibC::Int
+  fun get_adjacency = igraph_get_adjacency(graph : S*, res : MatrixT*, type : GetAdjacencyT, eids : BoolT) : LibC::Int
   enum GetAdjacencyT
     GetAdjacencyUpper = 0
     GetAdjacencyLower = 1
     GetAdjacencyBoth = 2
   end
-  fun get_adjacency_sparse = igraph_get_adjacency_sparse(graph : T*, res : SpmatrixT*, type : GetAdjacencyT) : LibC::Int
-  fun get_stochastic = igraph_get_stochastic(graph : T*, matrix : MatrixT*, column_wise : BoolT) : LibC::Int
-  fun get_stochastic_sparsemat = igraph_get_stochastic_sparsemat(graph : T*, sparsemat : SparsematT*, column_wise : BoolT) : LibC::Int
-  fun get_edgelist = igraph_get_edgelist(graph : T*, res : VectorT*, bycol : BoolT) : LibC::Int
-  fun to_directed = igraph_to_directed(graph : T*, flags : ToDirectedT) : LibC::Int
+  fun get_adjacency_sparse = igraph_get_adjacency_sparse(graph : S*, res : SpmatrixT*, type : GetAdjacencyT) : LibC::Int
+  fun get_stochastic = igraph_get_stochastic(graph : S*, matrix : MatrixT*, column_wise : BoolT) : LibC::Int
+  fun get_stochastic_sparsemat = igraph_get_stochastic_sparsemat(graph : S*, sparsemat : SparsematT*, column_wise : BoolT) : LibC::Int
+  fun get_edgelist = igraph_get_edgelist(graph : S*, res : VectorT*, bycol : BoolT) : LibC::Int
+  fun to_directed = igraph_to_directed(graph : S*, flags : ToDirectedT) : LibC::Int
   enum ToDirectedT
     ToDirectedArbitrary = 0
     ToDirectedMutual = 1
   end
-  fun to_undirected = igraph_to_undirected(graph : T*, flags : ToUndirectedT, edge_comb : AttributeCombinationT*) : LibC::Int
+  fun to_undirected = igraph_to_undirected(graph : S*, flags : ToUndirectedT, edge_comb : AttributeCombinationT*) : LibC::Int
   enum ToUndirectedT
     ToUndirectedEach = 0
     ToUndirectedCollapse = 1
     ToUndirectedMutual = 2
   end
-  fun read_graph_edgelist = igraph_read_graph_edgelist(graph : T*, instream : File*, n : IntegerT, directed : BoolT) : LibC::Int
-  fun read_graph_ncol = igraph_read_graph_ncol(graph : T*, instream : File*, predefnames : StrvectorT*, names : BoolT, weights : AddWeightsT, directed : BoolT) : LibC::Int
+  fun read_graph_edgelist = igraph_read_graph_edgelist(graph : S*, instream : File*, n : IntegerT, directed : BoolT) : LibC::Int
+  fun read_graph_ncol = igraph_read_graph_ncol(graph : S*, instream : File*, predefnames : StrvectorT*, names : BoolT, weights : AddWeightsT, directed : BoolT) : LibC::Int
   enum AddWeightsT
     AddWeightsNo = 0
     AddWeightsYes = 1
     AddWeightsIfPresent = 2
   end
-  fun read_graph_lgl = igraph_read_graph_lgl(graph : T*, instream : File*, names : BoolT, weights : AddWeightsT, directed : BoolT) : LibC::Int
-  fun read_graph_pajek = igraph_read_graph_pajek(graph : T*, instream : File*) : LibC::Int
-  fun read_graph_graphml = igraph_read_graph_graphml(graph : T*, instream : File*, index : LibC::Int) : LibC::Int
-  fun read_graph_dimacs = igraph_read_graph_dimacs(graph : T*, instream : File*, problem : StrvectorT*, label : VectorT*, source : IntegerT*, target : IntegerT*, capacity : VectorT*, directed : BoolT) : LibC::Int
-  fun read_graph_graphdb = igraph_read_graph_graphdb(graph : T*, instream : File*, directed : BoolT) : LibC::Int
-  fun read_graph_gml = igraph_read_graph_gml(graph : T*, instream : File*) : LibC::Int
-  fun read_graph_dl = igraph_read_graph_dl(graph : T*, instream : File*, directed : BoolT) : LibC::Int
-  fun write_graph_edgelist = igraph_write_graph_edgelist(graph : T*, outstream : File*) : LibC::Int
-  fun write_graph_ncol = igraph_write_graph_ncol(graph : T*, outstream : File*, names : LibC::Char*, weights : LibC::Char*) : LibC::Int
-  fun write_graph_lgl = igraph_write_graph_lgl(graph : T*, outstream : File*, names : LibC::Char*, weights : LibC::Char*, isolates : BoolT) : LibC::Int
-  fun write_graph_graphml = igraph_write_graph_graphml(graph : T*, outstream : File*, prefixattr : BoolT) : LibC::Int
-  fun write_graph_pajek = igraph_write_graph_pajek(graph : T*, outstream : File*) : LibC::Int
-  fun write_graph_dimacs = igraph_write_graph_dimacs(graph : T*, outstream : File*, source : LibC::Long, target : LibC::Long, capacity : VectorT*) : LibC::Int
-  fun write_graph_gml = igraph_write_graph_gml(graph : T*, outstream : File*, id : VectorT*, creator : LibC::Char*) : LibC::Int
-  fun write_graph_dot = igraph_write_graph_dot(graph : T*, outstream : File*) : LibC::Int
-  fun write_graph_leda = igraph_write_graph_leda(graph : T*, outstream : File*, vertex_attr_name : LibC::Char*, edge_attr_name : LibC::Char*) : LibC::Int
-  fun motifs_randesu = igraph_motifs_randesu(graph : T*, hist : VectorT*, size : LibC::Int, cut_prob : VectorT*) : LibC::Int
-  fun motifs_randesu_callback = igraph_motifs_randesu_callback(graph : T*, size : LibC::Int, cut_prob : VectorT*, callback : T*, VectorT*, LibC::Int, Void* -> BoolT, extra : Void*) : LibC::Int
-  fun motifs_randesu_estimate = igraph_motifs_randesu_estimate(graph : T*, est : IntegerT*, size : LibC::Int, cut_prob : VectorT*, sample_size : IntegerT, sample : VectorT*) : LibC::Int
-  fun motifs_randesu_no = igraph_motifs_randesu_no(graph : T*, no : IntegerT*, size : LibC::Int, cut_prob : VectorT*) : LibC::Int
-  fun dyad_census = igraph_dyad_census(graph : T*, mut : IntegerT*, asym : IntegerT*, null : IntegerT*) : LibC::Int
-  fun triad_census = igraph_triad_census(igraph : T*, res : VectorT*) : LibC::Int
-  fun triad_census_24 = igraph_triad_census_24(graph : T*, res2 : IntegerT*, res4 : IntegerT*) : LibC::Int
-  fun adjacent_triangles = igraph_adjacent_triangles(graph : T*, res : VectorT*, vids : VsT) : LibC::Int
-  fun disjoint_union = igraph_disjoint_union(res : T*, left : T*, right : T*) : LibC::Int
-  fun disjoint_union_many = igraph_disjoint_union_many(res : T*, graphs : VectorPtrT*) : LibC::Int
-  fun union = igraph_union(res : T*, left : T*, right : T*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
-  fun union_many = igraph_union_many(res : T*, graphs : VectorPtrT*, edgemaps : VectorPtrT*) : LibC::Int
-  fun intersection = igraph_intersection(res : T*, left : T*, right : T*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
-  fun intersection_many = igraph_intersection_many(res : T*, graphs : VectorPtrT*, edgemaps : VectorPtrT*) : LibC::Int
-  fun difference = igraph_difference(res : T*, orig : T*, sub : T*) : LibC::Int
-  fun complementer = igraph_complementer(res : T*, graph : T*, loops : BoolT) : LibC::Int
-  fun compose = igraph_compose(res : T*, g1 : T*, g2 : T*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
-  fun maxflow = igraph_maxflow(graph : T*, value : RealT*, flow : VectorT*, cut : VectorT*, partition : VectorT*, partition2 : VectorT*, source : IntegerT, target : IntegerT, capacity : VectorT*, stats : MaxflowStatsT*) : LibC::Int
+  fun read_graph_lgl = igraph_read_graph_lgl(graph : S*, instream : File*, names : BoolT, weights : AddWeightsT, directed : BoolT) : LibC::Int
+  fun read_graph_pajek = igraph_read_graph_pajek(graph : S*, instream : File*) : LibC::Int
+  fun read_graph_graphml = igraph_read_graph_graphml(graph : S*, instream : File*, index : LibC::Int) : LibC::Int
+  fun read_graph_dimacs = igraph_read_graph_dimacs(graph : S*, instream : File*, problem : StrvectorT*, label : VectorT*, source : IntegerT*, target : IntegerT*, capacity : VectorT*, directed : BoolT) : LibC::Int
+  fun read_graph_graphdb = igraph_read_graph_graphdb(graph : S*, instream : File*, directed : BoolT) : LibC::Int
+  fun read_graph_gml = igraph_read_graph_gml(graph : S*, instream : File*) : LibC::Int
+  fun read_graph_dl = igraph_read_graph_dl(graph : S*, instream : File*, directed : BoolT) : LibC::Int
+  fun write_graph_edgelist = igraph_write_graph_edgelist(graph : S*, outstream : File*) : LibC::Int
+  fun write_graph_ncol = igraph_write_graph_ncol(graph : S*, outstream : File*, names : LibC::Char*, weights : LibC::Char*) : LibC::Int
+  fun write_graph_lgl = igraph_write_graph_lgl(graph : S*, outstream : File*, names : LibC::Char*, weights : LibC::Char*, isolates : BoolT) : LibC::Int
+  fun write_graph_graphml = igraph_write_graph_graphml(graph : S*, outstream : File*, prefixattr : BoolT) : LibC::Int
+  fun write_graph_pajek = igraph_write_graph_pajek(graph : S*, outstream : File*) : LibC::Int
+  fun write_graph_dimacs = igraph_write_graph_dimacs(graph : S*, outstream : File*, source : LibC::Long, target : LibC::Long, capacity : VectorT*) : LibC::Int
+  fun write_graph_gml = igraph_write_graph_gml(graph : S*, outstream : File*, id : VectorT*, creator : LibC::Char*) : LibC::Int
+  fun write_graph_dot = igraph_write_graph_dot(graph : S*, outstream : File*) : LibC::Int
+  fun write_graph_leda = igraph_write_graph_leda(graph : S*, outstream : File*, vertex_attr_name : LibC::Char*, edge_attr_name : LibC::Char*) : LibC::Int
+  fun motifs_randesu = igraph_motifs_randesu(graph : S*, hist : VectorT*, size : LibC::Int, cut_prob : VectorT*) : LibC::Int
+  fun motifs_randesu_callback = igraph_motifs_randesu_callback(graph : S*, size : LibC::Int, cut_prob : VectorT*, callback : S*, VectorT*, LibC::Int, Void* -> BoolT, extra : Void*) : LibC::Int
+  fun motifs_randesu_estimate = igraph_motifs_randesu_estimate(graph : S*, est : IntegerT*, size : LibC::Int, cut_prob : VectorT*, sample_size : IntegerT, sample : VectorT*) : LibC::Int
+  fun motifs_randesu_no = igraph_motifs_randesu_no(graph : S*, no : IntegerT*, size : LibC::Int, cut_prob : VectorT*) : LibC::Int
+  fun dyad_census = igraph_dyad_census(graph : S*, mut : IntegerT*, asym : IntegerT*, null : IntegerT*) : LibC::Int
+  fun triad_census = igraph_triad_census(igraph : S*, res : VectorT*) : LibC::Int
+  fun triad_census_24 = igraph_triad_census_24(graph : S*, res2 : IntegerT*, res4 : IntegerT*) : LibC::Int
+  fun adjacent_triangles = igraph_adjacent_triangles(graph : S*, res : VectorT*, vids : VsT) : LibC::Int
+  fun disjoint_union = igraph_disjoint_union(res : S*, left : S*, right : S*) : LibC::Int
+  fun disjoint_union_many = igraph_disjoint_union_many(res : S*, graphs : VectorPtrT*) : LibC::Int
+  fun union = igraph_union(res : S*, left : S*, right : S*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
+  fun union_many = igraph_union_many(res : S*, graphs : VectorPtrT*, edgemaps : VectorPtrT*) : LibC::Int
+  fun intersection = igraph_intersection(res : S*, left : S*, right : S*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
+  fun intersection_many = igraph_intersection_many(res : S*, graphs : VectorPtrT*, edgemaps : VectorPtrT*) : LibC::Int
+  fun difference = igraph_difference(res : S*, orig : S*, sub : S*) : LibC::Int
+  fun complementer = igraph_complementer(res : S*, graph : S*, loops : BoolT) : LibC::Int
+  fun compose = igraph_compose(res : S*, g1 : S*, g2 : S*, edge_map1 : VectorT*, edge_map2 : VectorT*) : LibC::Int
+  fun maxflow = igraph_maxflow(graph : S*, value : RealT*, flow : VectorT*, cut : VectorT*, partition : VectorT*, partition2 : VectorT*, source : IntegerT, target : IntegerT, capacity : VectorT*, stats : MaxflowStatsT*) : LibC::Int
   struct MaxflowStatsT
     nopush : LibC::Int
     norelabel : LibC::Int
@@ -2670,63 +2669,63 @@ lib IGraph
     nogapnodes : LibC::Int
     nobfs : LibC::Int
   end
-  fun maxflow_value = igraph_maxflow_value(graph : T*, value : RealT*, source : IntegerT, target : IntegerT, capacity : VectorT*, stats : MaxflowStatsT*) : LibC::Int
-  fun st_mincut = igraph_st_mincut(graph : T*, value : RealT*, cut : VectorT*, partition : VectorT*, partition2 : VectorT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
-  fun st_mincut_value = igraph_st_mincut_value(graph : T*, res : RealT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
-  fun mincut_value = igraph_mincut_value(graph : T*, res : RealT*, capacity : VectorT*) : LibC::Int
-  fun mincut = igraph_mincut(graph : T*, value : RealT*, partition : VectorT*, partition2 : VectorT*, cut : VectorT*, capacity : VectorT*) : LibC::Int
-  fun st_vertex_connectivity = igraph_st_vertex_connectivity(graph : T*, res : IntegerT*, source : IntegerT, target : IntegerT, neighbors : VconnNeiT) : LibC::Int
+  fun maxflow_value = igraph_maxflow_value(graph : S*, value : RealT*, source : IntegerT, target : IntegerT, capacity : VectorT*, stats : MaxflowStatsT*) : LibC::Int
+  fun st_mincut = igraph_st_mincut(graph : S*, value : RealT*, cut : VectorT*, partition : VectorT*, partition2 : VectorT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
+  fun st_mincut_value = igraph_st_mincut_value(graph : S*, res : RealT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
+  fun mincut_value = igraph_mincut_value(graph : S*, res : RealT*, capacity : VectorT*) : LibC::Int
+  fun mincut = igraph_mincut(graph : S*, value : RealT*, partition : VectorT*, partition2 : VectorT*, cut : VectorT*, capacity : VectorT*) : LibC::Int
+  fun st_vertex_connectivity = igraph_st_vertex_connectivity(graph : S*, res : IntegerT*, source : IntegerT, target : IntegerT, neighbors : VconnNeiT) : LibC::Int
   enum VconnNeiT
     VconnNeiError = 0
     VconnNeiNumberOfNodes = 1
     VconnNeiIgnore = 2
     VconnNeiNegative = 3
   end
-  fun vertex_connectivity = igraph_vertex_connectivity(graph : T*, res : IntegerT*, checks : BoolT) : LibC::Int
-  fun st_edge_connectivity = igraph_st_edge_connectivity(graph : T*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
-  fun edge_connectivity = igraph_edge_connectivity(graph : T*, res : IntegerT*, checks : BoolT) : LibC::Int
-  fun edge_disjoint_paths = igraph_edge_disjoint_paths(graph : T*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
-  fun vertex_disjoint_paths = igraph_vertex_disjoint_paths(graph : T*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
-  fun adhesion = igraph_adhesion(graph : T*, res : IntegerT*, checks : BoolT) : LibC::Int
-  fun cohesion = igraph_cohesion(graph : T*, res : IntegerT*, checks : BoolT) : LibC::Int
-  fun even_tarjan_reduction = igraph_even_tarjan_reduction(graph : T*, graphbar : T*, capacity : VectorT*) : LibC::Int
-  fun residual_graph = igraph_residual_graph(graph : T*, capacity : VectorT*, residual : T*, residual_capacity : VectorT*, flow : VectorT*) : LibC::Int
-  fun i_residual_graph = igraph_i_residual_graph(graph : T*, capacity : VectorT*, residual : T*, residual_capacity : VectorT*, flow : VectorT*, tmp : VectorT*) : LibC::Int
-  fun i_reverse_residual_graph = igraph_i_reverse_residual_graph(graph : T*, capacity : VectorT*, residual : T*, flow : VectorT*, tmp : VectorT*) : LibC::Int
-  fun reverse_residual_graph = igraph_reverse_residual_graph(graph : T*, capacity : VectorT*, residual : T*, flow : VectorT*) : LibC::Int
-  fun dominator_tree = igraph_dominator_tree(graph : T*, root : IntegerT, dom : VectorT*, domtree : T*, leftout : VectorT*, mode : NeimodeT) : LibC::Int
-  fun all_st_cuts = igraph_all_st_cuts(graph : T*, cuts : VectorPtrT*, partition1s : VectorPtrT*, source : IntegerT, target : IntegerT) : LibC::Int
-  fun all_st_mincuts = igraph_all_st_mincuts(graph : T*, value : RealT*, cuts : VectorPtrT*, partition1s : VectorPtrT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
-  fun gomory_hu_tree = igraph_gomory_hu_tree(graph : T*, tree : T*, flows : VectorT*, capacity : VectorT*) : LibC::Int
+  fun vertex_connectivity = igraph_vertex_connectivity(graph : S*, res : IntegerT*, checks : BoolT) : LibC::Int
+  fun st_edge_connectivity = igraph_st_edge_connectivity(graph : S*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
+  fun edge_connectivity = igraph_edge_connectivity(graph : S*, res : IntegerT*, checks : BoolT) : LibC::Int
+  fun edge_disjoint_paths = igraph_edge_disjoint_paths(graph : S*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
+  fun vertex_disjoint_paths = igraph_vertex_disjoint_paths(graph : S*, res : IntegerT*, source : IntegerT, target : IntegerT) : LibC::Int
+  fun adhesion = igraph_adhesion(graph : S*, res : IntegerT*, checks : BoolT) : LibC::Int
+  fun cohesion = igraph_cohesion(graph : S*, res : IntegerT*, checks : BoolT) : LibC::Int
+  fun even_tarjan_reduction = igraph_even_tarjan_reduction(graph : S*, graphbar : S*, capacity : VectorT*) : LibC::Int
+  fun residual_graph = igraph_residual_graph(graph : S*, capacity : VectorT*, residual : S*, residual_capacity : VectorT*, flow : VectorT*) : LibC::Int
+  fun i_residual_graph = igraph_i_residual_graph(graph : S*, capacity : VectorT*, residual : S*, residual_capacity : VectorT*, flow : VectorT*, tmp : VectorT*) : LibC::Int
+  fun i_reverse_residual_graph = igraph_i_reverse_residual_graph(graph : S*, capacity : VectorT*, residual : S*, flow : VectorT*, tmp : VectorT*) : LibC::Int
+  fun reverse_residual_graph = igraph_reverse_residual_graph(graph : S*, capacity : VectorT*, residual : S*, flow : VectorT*) : LibC::Int
+  fun dominator_tree = igraph_dominator_tree(graph : S*, root : IntegerT, dom : VectorT*, domtree : S*, leftout : VectorT*, mode : NeimodeT) : LibC::Int
+  fun all_st_cuts = igraph_all_st_cuts(graph : S*, cuts : VectorPtrT*, partition1s : VectorPtrT*, source : IntegerT, target : IntegerT) : LibC::Int
+  fun all_st_mincuts = igraph_all_st_mincuts(graph : S*, value : RealT*, cuts : VectorPtrT*, partition1s : VectorPtrT*, source : IntegerT, target : IntegerT, capacity : VectorT*) : LibC::Int
+  fun gomory_hu_tree = igraph_gomory_hu_tree(graph : S*, tree : S*, flows : VectorT*, capacity : VectorT*) : LibC::Int
   struct AdjlistT
     length : IntegerT
     adjs : VectorIntT*
   end
-  fun adjlist_init = igraph_adjlist_init(graph : T*, al : AdjlistT*, mode : NeimodeT) : LibC::Int
+  fun adjlist_init = igraph_adjlist_init(graph : S*, al : AdjlistT*, mode : NeimodeT) : LibC::Int
   fun adjlist_init_empty = igraph_adjlist_init_empty(al : AdjlistT*, no_of_nodes : IntegerT) : LibC::Int
   fun adjlist_size = igraph_adjlist_size(al : AdjlistT*) : IntegerT
-  fun adjlist_init_complementer = igraph_adjlist_init_complementer(graph : T*, al : AdjlistT*, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun adjlist_init_complementer = igraph_adjlist_init_complementer(graph : S*, al : AdjlistT*, mode : NeimodeT, loops : BoolT) : LibC::Int
   fun adjlist_destroy = igraph_adjlist_destroy(al : AdjlistT*)
   fun adjlist_clear = igraph_adjlist_clear(al : AdjlistT*)
   fun adjlist_sort = igraph_adjlist_sort(al : AdjlistT*)
   fun adjlist_simplify = igraph_adjlist_simplify(al : AdjlistT*) : LibC::Int
-  fun adjlist_remove_duplicate = igraph_adjlist_remove_duplicate(graph : T*, al : AdjlistT*) : LibC::Int
+  fun adjlist_remove_duplicate = igraph_adjlist_remove_duplicate(graph : S*, al : AdjlistT*) : LibC::Int
   fun adjlist_print = igraph_adjlist_print(al : AdjlistT*) : LibC::Int
   fun adjlist_fprint = igraph_adjlist_fprint(al : AdjlistT*, outfile : File*) : LibC::Int
-  fun adjlist = igraph_adjlist(graph : T*, adjlist : AdjlistT*, mode : NeimodeT, duplicate : BoolT) : LibC::Int
+  fun adjlist = igraph_adjlist(graph : S*, adjlist : AdjlistT*, mode : NeimodeT, duplicate : BoolT) : LibC::Int
   struct InclistT
     length : IntegerT
     incs : VectorT*
   end
-  fun inclist_init = igraph_inclist_init(graph : T*, il : InclistT*, mode : NeimodeT) : LibC::Int
+  fun inclist_init = igraph_inclist_init(graph : S*, il : InclistT*, mode : NeimodeT) : LibC::Int
   fun inclist_init_empty = igraph_inclist_init_empty(il : InclistT*, n : IntegerT) : LibC::Int
   fun inclist_destroy = igraph_inclist_destroy(il : InclistT*)
   fun inclist_clear = igraph_inclist_clear(il : InclistT*)
-  fun inclist_remove_duplicate = igraph_inclist_remove_duplicate(graph : T*, il : InclistT*) : LibC::Int
+  fun inclist_remove_duplicate = igraph_inclist_remove_duplicate(graph : S*, il : InclistT*) : LibC::Int
   fun inclist_print = igraph_inclist_print(il : InclistT*) : LibC::Int
   fun inclist_fprint = igraph_inclist_fprint(il : InclistT*, outfile : File*) : LibC::Int
   struct LazyAdjlistT
-    graph : T*
+    graph : S*
     length : IntegerT
     adjs : VectorT**
     mode : NeimodeT
@@ -2736,155 +2735,155 @@ lib IGraph
     DontSimplify = 0
     Simplify = 1
   end
-  fun lazy_adjlist_init = igraph_lazy_adjlist_init(graph : T*, al : LazyAdjlistT*, mode : NeimodeT, simplify : LazyAdlistSimplifyT) : LibC::Int
+  fun lazy_adjlist_init = igraph_lazy_adjlist_init(graph : S*, al : LazyAdjlistT*, mode : NeimodeT, simplify : LazyAdlistSimplifyT) : LibC::Int
   fun lazy_adjlist_destroy = igraph_lazy_adjlist_destroy(al : LazyAdjlistT*)
   fun lazy_adjlist_clear = igraph_lazy_adjlist_clear(al : LazyAdjlistT*)
   fun lazy_adjlist_get_real = igraph_lazy_adjlist_get_real(al : LazyAdjlistT*, no : IntegerT) : VectorT*
   struct LazyInclistT
-    graph : T*
+    graph : S*
     length : IntegerT
     incs : VectorT**
     mode : NeimodeT
   end
-  fun lazy_inclist_init = igraph_lazy_inclist_init(graph : T*, il : LazyInclistT*, mode : NeimodeT) : LibC::Int
+  fun lazy_inclist_init = igraph_lazy_inclist_init(graph : S*, il : LazyInclistT*, mode : NeimodeT) : LibC::Int
   fun lazy_inclist_destroy = igraph_lazy_inclist_destroy(il : LazyInclistT*)
   fun lazy_inclist_clear = igraph_lazy_inclist_clear(il : LazyInclistT*)
   fun lazy_inclist_get_real = igraph_lazy_inclist_get_real(al : LazyInclistT*, no : IntegerT) : VectorT*
-  fun adjedgelist_init = igraph_adjedgelist_init(graph : T*, il : InclistT*, mode : NeimodeT) : LibC::Int
+  fun adjedgelist_init = igraph_adjedgelist_init(graph : S*, il : InclistT*, mode : NeimodeT) : LibC::Int
   fun adjedgelist_destroy = igraph_adjedgelist_destroy(il : InclistT*)
-  fun adjedgelist_remove_duplicate = igraph_adjedgelist_remove_duplicate(graph : T*, il : InclistT*) : LibC::Int
+  fun adjedgelist_remove_duplicate = igraph_adjedgelist_remove_duplicate(graph : S*, il : InclistT*) : LibC::Int
   fun adjedgelist_print = igraph_adjedgelist_print(il : InclistT*, outfile : File*) : LibC::Int
-  fun lazy_adjedgelist_init = igraph_lazy_adjedgelist_init(graph : T*, il : LazyInclistT*, mode : NeimodeT) : LibC::Int
+  fun lazy_adjedgelist_init = igraph_lazy_adjedgelist_init(graph : S*, il : LazyInclistT*, mode : NeimodeT) : LibC::Int
   fun lazy_adjedgelist_destroy = igraph_lazy_adjedgelist_destroy(il : LazyInclistT*)
   fun lazy_adjedgelist_get_real = igraph_lazy_adjedgelist_get_real(al : LazyInclistT*, no : IntegerT) : VectorT*
-  fun evolver_d = igraph_evolver_d(graph : T*, nodes : IntegerT, kernel : VectorT*, outseq : VectorT*, outdist : VectorT*, m : IntegerT, directed : BoolT) : LibC::Int
-  fun revolver_d = igraph_revolver_d(graph : T*, niter : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_d = igraph_revolver_mes_d(graph : T*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT) : LibC::Int
-  fun revolver_st_d = igraph_revolver_st_d(graph : T*, st : VectorT*, kernel : VectorT*) : LibC::Int
-  fun revolver_exp_d = igraph_revolver_exp_d(graphm : T*, expected : VectorT*, kernel : VectorT*, st : VectorT*, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_d = igraph_revolver_error_d(graph : T*, kernel : VectorT*, st : VectorT*, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_d = igraph_revolver_error2_d(graph : T*, kernel : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_ad = igraph_revolver_ad(graph : T*, niter : IntegerT, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_ad = igraph_revolver_mes_ad(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT, agebins : IntegerT) : LibC::Int
-  fun revolver_st_ad = igraph_revolver_st_ad(graph : T*, st : VectorT*, kernel : MatrixT*) : LibC::Int
-  fun revolver_exp_ad = igraph_revolver_exp_ad(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, agebins : IntegerT) : LibC::Int
-  fun revolver_error_ad = igraph_revolver_error_ad(graph : T*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_ad = igraph_revolver_error2_ad(graph : T*, kernel : MatrixT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_ade = igraph_revolver_ade(graph : T*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_ade = igraph_revolver_mes_ade(graph : T*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebind : IntegerT) : LibC::Int
-  fun revolver_st_ade = igraph_revolver_st_ade(graph : T*, st : VectorT*, kernel : Array3T*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_ade = igraph_revolver_exp_ade(graph : T*, expected : Array3T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, nocats : IntegerT, maxdegree : IntegerT, agebins : IntegerT) : LibC::Int
-  fun revolver_error_ade = igraph_revolver_error_ade(graph : T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxdegree : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_ade = igraph_revolver_error2_ade(graph : T*, kernel : Array3T*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_e = igraph_revolver_e(graph : T*, niter : IntegerT, cats : VectorT*, kernel : VectorT*, st : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_e = igraph_revolver_mes_e(graph : T*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT) : LibC::Int
-  fun revolver_st_e = igraph_revolver_st_e(graph : T*, st : VectorT*, kernel : VectorT*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_e = igraph_revolver_exp_e(graph : T*, expected : VectorT*, kernel : VectorT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT) : LibC::Int
-  fun revolver_error_e = igraph_revolver_error_e(graph : T*, kernel : VectorT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_e = igraph_revolver_error2_e(graph : T*, kernel : VectorT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_de = igraph_revolver_de(graph : T*, niter : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_de = igraph_revolver_mes_de(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_st_de = igraph_revolver_st_de(graph : T*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_de = igraph_revolver_exp_de(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_de = igraph_revolver_error_de(graph : T*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_de = igraph_revolver_error2_de(graph : T*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_l = igraph_revolver_l(graph : T*, niter : IntegerT, agebins : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_l = igraph_revolver_mes_l(graph : T*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_l = igraph_revolver_st_l(graph : T*, st : VectorT*, kernel : VectorT*) : LibC::Int
-  fun revolver_exp_l = igraph_revolver_exp_l(graph : T*, expected : VectorT*, kernel : VectorT*, st : VectorT*, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_l = igraph_revolver_error_l(graph : T*, kernel : VectorT*, st : VectorT*, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_l = igraph_revolver_error2_l(graph : T*, kernel : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_dl = igraph_revolver_dl(graph : T*, niter : IntegerT, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_dl = igraph_revolver_mes_dl(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_dl = igraph_revolver_st_dl(graph : T*, st : VectorT*, kernel : MatrixT*) : LibC::Int
-  fun revolver_exp_dl = igraph_revolver_exp_dl(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_dl = igraph_revolver_error_dl(graph : T*, kernel : MatrixT*, st : VectorT*, pagebins : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_dl = igraph_revolver_error2_dl(graph : T*, kernel : MatrixT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_el = igraph_revolver_el(graph : T*, niter : IntegerT, cats : VectorT*, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_el = igraph_revolver_mes_el(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_el = igraph_revolver_st_el(graph : T*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_el = igraph_revolver_exp_el(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_el = igraph_revolver_error_el(graph : T*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_el = igraph_revolver_error2_el(graph : T*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_r = igraph_revolver_r(graph : T*, niter : IntegerT, window : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_r = igraph_revolver_mes_r(graph : T*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, window : IntegerT, maxind : IntegerT) : LibC::Int
-  fun revolver_st_r = igraph_revolver_st_r(graph : T*, st : VectorT*, kernel : VectorT*, window : IntegerT) : LibC::Int
-  fun revolver_exp_r = igraph_revolver_exp_r(graph : T*, expected : VectorT*, kernel : VectorT*, st : VectorT*, window : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_r = igraph_revolver_error_r(graph : T*, kernel : VectorT*, st : VectorT*, window : IntegerT, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_r = igraph_revolver_error2_r(graph : T*, kernel : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_ar = igraph_revolver_ar(graph : T*, niter : IntegerT, agebins : IntegerT, window : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_ar = igraph_revolver_mes_ar(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pagebins : IntegerT, pwindow : IntegerT, maxind : IntegerT) : LibC::Int
-  fun revolver_st_ar = igraph_revolver_st_ar(graph : T*, st : VectorT*, kernel : MatrixT*, pwindow : IntegerT) : LibC::Int
-  fun revolver_exp_ar = igraph_revolver_exp_ar(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, agebins : IntegerT, window : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_ar = igraph_revolver_error_ar(graph : T*, kernel : MatrixT*, st : VectorT*, pagebins : IntegerT, pwindow : IntegerT, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_ar = igraph_revolver_error2_ar(graph : T*, kernel : MatrixT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_di = igraph_revolver_di(graph : T*, niter : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_di = igraph_revolver_mes_di(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_st_di = igraph_revolver_st_di(graph : T*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_di = igraph_revolver_exp_di(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_di = igraph_revolver_error_di(graph : T*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_di = igraph_revolver_error2_di(graph : T*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_adi = igraph_revolver_adi(graph : T*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_adi = igraph_revolver_mes_adi(graph : T*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_adi = igraph_revolver_st_adi(graph : T*, st : VectorT*, kernel : Array3T*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_adi = igraph_revolver_exp_adi(graph : T*, expected : Array3T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_adi = igraph_revolver_error_adi(graph : T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_adi = igraph_revolver_error2_adi(graph : T*, kernel : Array3T*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_il = igraph_revolver_il(graph : T*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_il = igraph_revolver_mes_il(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_il = igraph_revolver_st_il(graph : T*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
-  fun revolver_exp_il = igraph_revolver_exp_il(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, nocats : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_il = igraph_revolver_error_il(graph : T*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, nocats : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_il = igraph_revolver_error2_il(graph : T*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_ir = igraph_revolver_ir(graph : T*, niter : IntegerT, window : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_ir = igraph_revolver_mes_ir(graph : T*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_st_ir = igraph_revolver_st_ir(graph : T*, st : VectorT*, kernel : MatrixT*, pwindow : IntegerT, cats : VectorT*) : LibC::Int
-  fun revolver_exp_ir = igraph_revolver_exp_ir(graph : T*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
-  fun revolver_error_ir = igraph_revolver_error_ir(graph : T*, kernel : MatrixT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_ir = igraph_revolver_error2_ir(graph : T*, kernel : MatrixT*, cats : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_air = igraph_revolver_air(graph : T*, niter : IntegerT, window : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_air = igraph_revolver_mes_air(graph : T*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_st_air = igraph_revolver_st_air(graph : T*, st : VectorT*, kernel : Array3T*, pwindow : IntegerT, cats : VectorT*) : LibC::Int
-  fun revolver_exp_air = igraph_revolver_exp_air(graph : T*, expected : Array3T*, kernel : Array3T*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
-  fun revolver_error_air = igraph_revolver_error_air(graph : T*, kernel : Array3T*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_error2_air = igraph_revolver_error2_air(graph : T*, kernel : Array3T*, cats : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_d_d = igraph_revolver_d_d(graph : T*, niter : IntegerT, vtime : VectorT*, etime : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_d_d = igraph_revolver_mes_d_d(graph : T*, inclist : LazyInclistT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT) : LibC::Int
-  fun revolver_st_d_d = igraph_revolver_st_d_d(graph : T*, inclist : LazyInclistT*, st : VectorT*, kernel : MatrixT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT) : LibC::Int
-  fun revolver_exp_d_d = igraph_revolver_exp_d_d(graph : T*, inclist : LazyInclistT*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT) : LibC::Int
-  fun revolver_error_d_d = igraph_revolver_error_d_d(graph : T*, inclist : LazyInclistT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_p_p = igraph_revolver_p_p(graph : T*, niter : IntegerT, vtime : VectorT*, etime : VectorT*, authors : VectorT*, eventsizes : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
-  fun revolver_mes_p_p = igraph_revolver_mes_p_p(graph : T*, inclist : LazyInclistT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
-  fun revolver_st_p_p = igraph_revolver_st_p_p(graph : T*, inclist : LazyInclistT*, st : VectorT*, kernel : MatrixT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
-  fun revolver_exp_p_p = igraph_revolver_exp_p_p(graph : T*, inclist : LazyInclistT*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
-  fun revolver_error_p_p = igraph_revolver_error_p_p(graph : T*, inclist : LazyInclistT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
-  fun revolver_ml_d = igraph_revolver_ml_d(graph : T*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_probs_d = igraph_revolver_probs_d(graph : T*, kernel : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*, ntk : BoolT) : LibC::Int
-  fun revolver_ml_de = igraph_revolver_ml_de(graph : T*, niter : IntegerT, kernel : MatrixT*, cats : VectorT*, cites : MatrixT*, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_probs_de = igraph_revolver_probs_de(graph : T*, kernel : MatrixT*, cats : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
-  fun revolver_ml_ade = igraph_revolver_ml_ade(graph : T*, niter : IntegerT, kernel : Array3T*, cats : VectorT*, cites : Array3T*, pagebins : IntegerT, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_probs_ade = igraph_revolver_probs_ade(graph : T*, kernel : Array3T*, cats : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
-  fun revolver_ml_f = igraph_revolver_ml_f(graph : T*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_ml_df = igraph_revolver_ml_df(graph : T*, niter : IntegerT, kernel : MatrixT*, cites : MatrixT*, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_ml_l = igraph_revolver_ml_l(graph : T*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, pagebins : IntegerT, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_ml_ad = igraph_revolver_ml_ad(graph : T*, niter : IntegerT, kernel : MatrixT*, cites : MatrixT*, pagebins : IntegerT, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
-  fun revolver_probs_ad = igraph_revolver_probs_ad(graph : T*, kernel : MatrixT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*, ntk : BoolT) : LibC::Int
-  fun revolver_ml_d = igraph_revolver_ml_D(graph : T*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_d_alpha = igraph_revolver_ml_D_alpha(graph : T*, alpha : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_d_alpha_a = igraph_revolver_ml_D_alpha_a(graph : T*, alpha : RealT*, a : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_de = igraph_revolver_ml_DE(graph : T*, cats : VectorT*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
-  fun revolver_ml_de_alpha_a = igraph_revolver_ml_DE_alpha_a(graph : T*, cats : VectorT*, alpha : RealT*, a : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_ad = igraph_revolver_ml_AD(graph : T*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
-  fun revolver_ml_ad_alpha_a_beta = igraph_revolver_ml_AD_alpha_a_beta(graph : T*, alpha : RealT*, a : RealT*, beta : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_ad_dpareto = igraph_revolver_ml_AD_dpareto(graph : T*, alpha : RealT*, a : RealT*, paralpha : RealT*, parbeta : RealT*, parscale : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_ad_dpareto_eval = igraph_revolver_ml_AD_dpareto_eval(graph : T*, alpha : RealT, a : RealT, paralpha : RealT, parbeta : RealT, parscale : RealT, value : RealT*, deriv : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
-  fun revolver_ml_ade = igraph_revolver_ml_ADE(graph : T*, cats : VectorT*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
-  fun revolver_probs_ade = igraph_revolver_probs_ADE(graph : T*, a_fun : VectorT*, VectorT*, Void* -> RealT, par : MatrixT*, cats : VectorT*, gcats : VectorT*, agebins : LibC::Int, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
-  fun revolver_ml_ade_alpha_a_beta = igraph_revolver_ml_ADE_alpha_a_beta(graph : T*, cats : VectorT*, alpha : RealT*, a : RealT*, beta : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_ade_dpareto = igraph_revolver_ml_ADE_dpareto(graph : T*, cats : VectorT*, alpha : RealT*, a : RealT*, paralpha : RealT*, parbeta : RealT*, parscale : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
-  fun revolver_ml_ade_dpareto_eval = igraph_revolver_ml_ADE_dpareto_eval(graph : T*, cats : VectorT*, alpha : RealT, a : RealT, paralpha : RealT, parbeta : RealT, parscale : RealT, coeffs : VectorT*, value : RealT*, deriv : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
-  fun revolver_ml_ade_dpareto_evalf = igraph_revolver_ml_ADE_dpareto_evalf(graph : T*, cats : VectorT*, par : MatrixT*, value : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
-  fun revolver_probs_ade_dpareto = igraph_revolver_probs_ADE_dpareto(graph : T*, par : MatrixT*, cats : VectorT*, gcats : VectorT*, agebins : LibC::Int, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
+  fun evolver_d = igraph_evolver_d(graph : S*, nodes : IntegerT, kernel : VectorT*, outseq : VectorT*, outdist : VectorT*, m : IntegerT, directed : BoolT) : LibC::Int
+  fun revolver_d = igraph_revolver_d(graph : S*, niter : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_d = igraph_revolver_mes_d(graph : S*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT) : LibC::Int
+  fun revolver_st_d = igraph_revolver_st_d(graph : S*, st : VectorT*, kernel : VectorT*) : LibC::Int
+  fun revolver_exp_d = igraph_revolver_exp_d(graphm : S*, expected : VectorT*, kernel : VectorT*, st : VectorT*, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_d = igraph_revolver_error_d(graph : S*, kernel : VectorT*, st : VectorT*, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_d = igraph_revolver_error2_d(graph : S*, kernel : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_ad = igraph_revolver_ad(graph : S*, niter : IntegerT, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_ad = igraph_revolver_mes_ad(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT, agebins : IntegerT) : LibC::Int
+  fun revolver_st_ad = igraph_revolver_st_ad(graph : S*, st : VectorT*, kernel : MatrixT*) : LibC::Int
+  fun revolver_exp_ad = igraph_revolver_exp_ad(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, agebins : IntegerT) : LibC::Int
+  fun revolver_error_ad = igraph_revolver_error_ad(graph : S*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_ad = igraph_revolver_error2_ad(graph : S*, kernel : MatrixT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_ade = igraph_revolver_ade(graph : S*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_ade = igraph_revolver_mes_ade(graph : S*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebind : IntegerT) : LibC::Int
+  fun revolver_st_ade = igraph_revolver_st_ade(graph : S*, st : VectorT*, kernel : Array3T*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_ade = igraph_revolver_exp_ade(graph : S*, expected : Array3T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, nocats : IntegerT, maxdegree : IntegerT, agebins : IntegerT) : LibC::Int
+  fun revolver_error_ade = igraph_revolver_error_ade(graph : S*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxdegree : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_ade = igraph_revolver_error2_ade(graph : S*, kernel : Array3T*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_e = igraph_revolver_e(graph : S*, niter : IntegerT, cats : VectorT*, kernel : VectorT*, st : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_e = igraph_revolver_mes_e(graph : S*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT) : LibC::Int
+  fun revolver_st_e = igraph_revolver_st_e(graph : S*, st : VectorT*, kernel : VectorT*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_e = igraph_revolver_exp_e(graph : S*, expected : VectorT*, kernel : VectorT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT) : LibC::Int
+  fun revolver_error_e = igraph_revolver_error_e(graph : S*, kernel : VectorT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_e = igraph_revolver_error2_e(graph : S*, kernel : VectorT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_de = igraph_revolver_de(graph : S*, niter : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_de = igraph_revolver_mes_de(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_st_de = igraph_revolver_st_de(graph : S*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_de = igraph_revolver_exp_de(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_de = igraph_revolver_error_de(graph : S*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_de = igraph_revolver_error2_de(graph : S*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_l = igraph_revolver_l(graph : S*, niter : IntegerT, agebins : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_l = igraph_revolver_mes_l(graph : S*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_l = igraph_revolver_st_l(graph : S*, st : VectorT*, kernel : VectorT*) : LibC::Int
+  fun revolver_exp_l = igraph_revolver_exp_l(graph : S*, expected : VectorT*, kernel : VectorT*, st : VectorT*, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_l = igraph_revolver_error_l(graph : S*, kernel : VectorT*, st : VectorT*, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_l = igraph_revolver_error2_l(graph : S*, kernel : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_dl = igraph_revolver_dl(graph : S*, niter : IntegerT, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_dl = igraph_revolver_mes_dl(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_dl = igraph_revolver_st_dl(graph : S*, st : VectorT*, kernel : MatrixT*) : LibC::Int
+  fun revolver_exp_dl = igraph_revolver_exp_dl(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_dl = igraph_revolver_error_dl(graph : S*, kernel : MatrixT*, st : VectorT*, pagebins : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_dl = igraph_revolver_error2_dl(graph : S*, kernel : MatrixT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_el = igraph_revolver_el(graph : S*, niter : IntegerT, cats : VectorT*, agebins : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_el = igraph_revolver_mes_el(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_el = igraph_revolver_st_el(graph : S*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_el = igraph_revolver_exp_el(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_el = igraph_revolver_error_el(graph : S*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_el = igraph_revolver_error2_el(graph : S*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_r = igraph_revolver_r(graph : S*, niter : IntegerT, window : IntegerT, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, expected : VectorT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : VectorT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_r = igraph_revolver_mes_r(graph : S*, kernel : VectorT*, sd : VectorT*, norm : VectorT*, cites : VectorT*, debug : VectorT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, window : IntegerT, maxind : IntegerT) : LibC::Int
+  fun revolver_st_r = igraph_revolver_st_r(graph : S*, st : VectorT*, kernel : VectorT*, window : IntegerT) : LibC::Int
+  fun revolver_exp_r = igraph_revolver_exp_r(graph : S*, expected : VectorT*, kernel : VectorT*, st : VectorT*, window : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_r = igraph_revolver_error_r(graph : S*, kernel : VectorT*, st : VectorT*, window : IntegerT, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_r = igraph_revolver_error2_r(graph : S*, kernel : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_ar = igraph_revolver_ar(graph : S*, niter : IntegerT, agebins : IntegerT, window : IntegerT, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_ar = igraph_revolver_mes_ar(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pagebins : IntegerT, pwindow : IntegerT, maxind : IntegerT) : LibC::Int
+  fun revolver_st_ar = igraph_revolver_st_ar(graph : S*, st : VectorT*, kernel : MatrixT*, pwindow : IntegerT) : LibC::Int
+  fun revolver_exp_ar = igraph_revolver_exp_ar(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, agebins : IntegerT, window : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_ar = igraph_revolver_error_ar(graph : S*, kernel : MatrixT*, st : VectorT*, pagebins : IntegerT, pwindow : IntegerT, maxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_ar = igraph_revolver_error2_ar(graph : S*, kernel : MatrixT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_di = igraph_revolver_di(graph : S*, niter : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_di = igraph_revolver_mes_di(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_st_di = igraph_revolver_st_di(graph : S*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_di = igraph_revolver_exp_di(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_di = igraph_revolver_error_di(graph : S*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_di = igraph_revolver_error2_di(graph : S*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_adi = igraph_revolver_adi(graph : S*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_adi = igraph_revolver_mes_adi(graph : S*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_adi = igraph_revolver_st_adi(graph : S*, st : VectorT*, kernel : Array3T*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_adi = igraph_revolver_exp_adi(graph : S*, expected : Array3T*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_adi = igraph_revolver_error_adi(graph : S*, kernel : Array3T*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_adi = igraph_revolver_error2_adi(graph : S*, kernel : Array3T*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_il = igraph_revolver_il(graph : S*, niter : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_il = igraph_revolver_mes_il(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, cats : VectorT*, pnocats : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_il = igraph_revolver_st_il(graph : S*, st : VectorT*, kernel : MatrixT*, cats : VectorT*) : LibC::Int
+  fun revolver_exp_il = igraph_revolver_exp_il(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, nocats : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_il = igraph_revolver_error_il(graph : S*, kernel : MatrixT*, st : VectorT*, cats : VectorT*, nocats : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_il = igraph_revolver_error2_il(graph : S*, kernel : MatrixT*, cats : VectorT*, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_ir = igraph_revolver_ir(graph : S*, niter : IntegerT, window : IntegerT, cats : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_ir = igraph_revolver_mes_ir(graph : S*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_st_ir = igraph_revolver_st_ir(graph : S*, st : VectorT*, kernel : MatrixT*, pwindow : IntegerT, cats : VectorT*) : LibC::Int
+  fun revolver_exp_ir = igraph_revolver_exp_ir(graph : S*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT) : LibC::Int
+  fun revolver_error_ir = igraph_revolver_error_ir(graph : S*, kernel : MatrixT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_ir = igraph_revolver_error2_ir(graph : S*, kernel : MatrixT*, cats : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_air = igraph_revolver_air(graph : S*, niter : IntegerT, window : IntegerT, agebins : IntegerT, cats : VectorT*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, expected : Array3T*, logprob : RealT*, lognull : RealT*, logmax : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_air = igraph_revolver_mes_air(graph : S*, kernel : Array3T*, sd : Array3T*, norm : Array3T*, cites : Array3T*, debug : MatrixT*, debugres : VectorPtrT*, logmax : RealT*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_st_air = igraph_revolver_st_air(graph : S*, st : VectorT*, kernel : Array3T*, pwindow : IntegerT, cats : VectorT*) : LibC::Int
+  fun revolver_exp_air = igraph_revolver_exp_air(graph : S*, expected : Array3T*, kernel : Array3T*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT) : LibC::Int
+  fun revolver_error_air = igraph_revolver_error_air(graph : S*, kernel : Array3T*, st : VectorT*, pwindow : IntegerT, cats : VectorT*, pnocats : IntegerT, pmaxind : IntegerT, pagebins : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_error2_air = igraph_revolver_error2_air(graph : S*, kernel : Array3T*, cats : VectorT*, window : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_d_d = igraph_revolver_d_d(graph : S*, niter : IntegerT, vtime : VectorT*, etime : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_d_d = igraph_revolver_mes_d_d(graph : S*, inclist : LazyInclistT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT) : LibC::Int
+  fun revolver_st_d_d = igraph_revolver_st_d_d(graph : S*, inclist : LazyInclistT*, st : VectorT*, kernel : MatrixT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT) : LibC::Int
+  fun revolver_exp_d_d = igraph_revolver_exp_d_d(graph : S*, inclist : LazyInclistT*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT) : LibC::Int
+  fun revolver_error_d_d = igraph_revolver_error_d_d(graph : S*, inclist : LazyInclistT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, pmaxdegree : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_p_p = igraph_revolver_p_p(graph : S*, niter : IntegerT, vtime : VectorT*, etime : VectorT*, authors : VectorT*, eventsizes : VectorT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, expected : MatrixT*, logprob : RealT*, lognull : RealT*, debug : MatrixT*, debugres : VectorPtrT*) : LibC::Int
+  fun revolver_mes_p_p = igraph_revolver_mes_p_p(graph : S*, inclist : LazyInclistT*, kernel : MatrixT*, sd : MatrixT*, norm : MatrixT*, cites : MatrixT*, debug : MatrixT*, debugres : VectorPtrT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
+  fun revolver_st_p_p = igraph_revolver_st_p_p(graph : S*, inclist : LazyInclistT*, st : VectorT*, kernel : MatrixT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
+  fun revolver_exp_p_p = igraph_revolver_exp_p_p(graph : S*, inclist : LazyInclistT*, expected : MatrixT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT) : LibC::Int
+  fun revolver_error_p_p = igraph_revolver_error_p_p(graph : S*, inclist : LazyInclistT*, kernel : MatrixT*, st : VectorT*, vtime : VectorT*, vtimeidx : VectorT*, etime : VectorT*, etimeidx : VectorT*, pno_of_events : IntegerT, authors : VectorT*, eventsizes : VectorT*, pmaxpapers : IntegerT, logprob : RealT*, lognull : RealT*) : LibC::Int
+  fun revolver_ml_d = igraph_revolver_ml_d(graph : S*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_probs_d = igraph_revolver_probs_d(graph : S*, kernel : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*, ntk : BoolT) : LibC::Int
+  fun revolver_ml_de = igraph_revolver_ml_de(graph : S*, niter : IntegerT, kernel : MatrixT*, cats : VectorT*, cites : MatrixT*, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_probs_de = igraph_revolver_probs_de(graph : S*, kernel : MatrixT*, cats : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
+  fun revolver_ml_ade = igraph_revolver_ml_ade(graph : S*, niter : IntegerT, kernel : Array3T*, cats : VectorT*, cites : Array3T*, pagebins : IntegerT, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_probs_ade = igraph_revolver_probs_ade(graph : S*, kernel : Array3T*, cats : VectorT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
+  fun revolver_ml_f = igraph_revolver_ml_f(graph : S*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_ml_df = igraph_revolver_ml_df(graph : S*, niter : IntegerT, kernel : MatrixT*, cites : MatrixT*, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_ml_l = igraph_revolver_ml_l(graph : S*, niter : IntegerT, kernel : VectorT*, cites : VectorT*, pagebins : IntegerT, delta : RealT, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_ml_ad = igraph_revolver_ml_ad(graph : S*, niter : IntegerT, kernel : MatrixT*, cites : MatrixT*, pagebins : IntegerT, delta : RealT, filter : VectorT*, logprob : RealT*, logmax : RealT*) : LibC::Int
+  fun revolver_probs_ad = igraph_revolver_probs_ad(graph : S*, kernel : MatrixT*, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*, ntk : BoolT) : LibC::Int
+  #fun revolver_ml_d = igraph_revolver_ml_D(graph : S*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_d_alpha = igraph_revolver_ml_D_alpha(graph : S*, alpha : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_d_alpha_a = igraph_revolver_ml_D_alpha_a(graph : S*, alpha : RealT*, a : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  #fun revolver_ml_de = igraph_revolver_ml_DE(graph : S*, cats : VectorT*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
+  fun revolver_ml_de_alpha_a = igraph_revolver_ml_DE_alpha_a(graph : S*, cats : VectorT*, alpha : RealT*, a : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  #fun revolver_ml_ad = igraph_revolver_ml_AD(graph : S*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
+  fun revolver_ml_ad_alpha_a_beta = igraph_revolver_ml_AD_alpha_a_beta(graph : S*, alpha : RealT*, a : RealT*, beta : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_ad_dpareto = igraph_revolver_ml_AD_dpareto(graph : S*, alpha : RealT*, a : RealT*, paralpha : RealT*, parbeta : RealT*, parscale : RealT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_ad_dpareto_eval = igraph_revolver_ml_AD_dpareto_eval(graph : S*, alpha : RealT, a : RealT, paralpha : RealT, parbeta : RealT, parscale : RealT, value : RealT*, deriv : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
+  #fun revolver_ml_ade = igraph_revolver_ml_ADE(graph : S*, cats : VectorT*, res : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, a_fun : VectorT*, VectorT*, Void* -> RealT, d_a_fun : VectorT*, VectorT*, VectorT*, Void* -> Void, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*, lastderiv : VectorT*) : LibC::Int
+  #fun revolver_probs_ade = igraph_revolver_probs_ADE(graph : S*, a_fun : VectorT*, VectorT*, Void* -> RealT, par : MatrixT*, cats : VectorT*, gcats : VectorT*, agebins : LibC::Int, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
+  fun revolver_ml_ade_alpha_a_beta = igraph_revolver_ml_ADE_alpha_a_beta(graph : S*, cats : VectorT*, alpha : RealT*, a : RealT*, beta : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_ade_dpareto = igraph_revolver_ml_ADE_dpareto(graph : S*, cats : VectorT*, alpha : RealT*, a : RealT*, paralpha : RealT*, parbeta : RealT*, parscale : RealT*, coeffs : VectorT*, fmin : RealT*, abstol : RealT, reltol : RealT, maxit : LibC::Int, agebins : LibC::Int, filter : VectorT*, fncount : IntegerT*, grcount : IntegerT*) : LibC::Int
+  fun revolver_ml_ade_dpareto_eval = igraph_revolver_ml_ADE_dpareto_eval(graph : S*, cats : VectorT*, alpha : RealT, a : RealT, paralpha : RealT, parbeta : RealT, parscale : RealT, coeffs : VectorT*, value : RealT*, deriv : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
+  fun revolver_ml_ade_dpareto_evalf = igraph_revolver_ml_ADE_dpareto_evalf(graph : S*, cats : VectorT*, par : MatrixT*, value : VectorT*, agebins : LibC::Int, filter : VectorT*) : LibC::Int
+  fun revolver_probs_ade_dpareto = igraph_revolver_probs_ADE_dpareto(graph : S*, par : MatrixT*, cats : VectorT*, gcats : VectorT*, agebins : LibC::Int, logprobs : VectorT*, logcited : VectorT*, logciting : VectorT*) : LibC::Int
   struct PlfitResultT
     continuous : BoolT
     alpha : LibC::Double
@@ -2902,15 +2901,15 @@ lib IGraph
   alias ScalarFunctionT = VectorT*, VectorT*, Void* -> RealT
   alias VectorFunctionT = VectorT*, VectorT*, VectorT*, Void* -> Void
   fun power_law_fit = igraph_power_law_fit(vector : VectorT*, result : PlfitResultT*, xmin : RealT, force_continuous : BoolT) : LibC::Int
-  fun cocitation = igraph_cocitation(graph : T*, res : MatrixT*, vids : VsT) : LibC::Int
-  fun bibcoupling = igraph_bibcoupling(graph : T*, res : MatrixT*, vids : VsT) : LibC::Int
-  fun similarity_jaccard = igraph_similarity_jaccard(graph : T*, res : MatrixT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_jaccard_pairs = igraph_similarity_jaccard_pairs(graph : T*, res : VectorT*, pairs : VectorT*, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_jaccard_es = igraph_similarity_jaccard_es(graph : T*, res : VectorT*, es : EsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_dice = igraph_similarity_dice(graph : T*, res : MatrixT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_dice_pairs = igraph_similarity_dice_pairs(graph : T*, res : VectorT*, pairs : VectorT*, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_dice_es = igraph_similarity_dice_es(graph : T*, res : VectorT*, es : EsT, mode : NeimodeT, loops : BoolT) : LibC::Int
-  fun similarity_inverse_log_weighted = igraph_similarity_inverse_log_weighted(graph : T*, res : MatrixT*, vids : VsT, mode : NeimodeT) : LibC::Int
+  fun cocitation = igraph_cocitation(graph : S*, res : MatrixT*, vids : VsT) : LibC::Int
+  fun bibcoupling = igraph_bibcoupling(graph : S*, res : MatrixT*, vids : VsT) : LibC::Int
+  fun similarity_jaccard = igraph_similarity_jaccard(graph : S*, res : MatrixT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_jaccard_pairs = igraph_similarity_jaccard_pairs(graph : S*, res : VectorT*, pairs : VectorT*, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_jaccard_es = igraph_similarity_jaccard_es(graph : S*, res : VectorT*, es : EsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_dice = igraph_similarity_dice(graph : S*, res : MatrixT*, vids : VsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_dice_pairs = igraph_similarity_dice_pairs(graph : S*, res : VectorT*, pairs : VectorT*, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_dice_es = igraph_similarity_dice_es(graph : S*, res : VectorT*, es : EsT, mode : NeimodeT, loops : BoolT) : LibC::Int
+  fun similarity_inverse_log_weighted = igraph_similarity_inverse_log_weighted(graph : S*, res : MatrixT*, vids : VsT, mode : NeimodeT) : LibC::Int
   fun blas_dgemv = igraph_blas_dgemv(transpose : BoolT, alpha : RealT, a : MatrixT*, x : VectorT*, beta : RealT, y : VectorT*)
   fun blas_dgemv_array = igraph_blas_dgemv_array(transpose : BoolT, alpha : RealT, a : MatrixT*, x : RealT*, beta : RealT, y : RealT*)
   fun lapack_dgetrf = igraph_lapack_dgetrf(a : MatrixT*, ipiv : VectorIntT*, info : LibC::Int*) : LibC::Int
@@ -2938,14 +2937,14 @@ lib IGraph
     LapackDgeevxBalanceBoth = 3
   end
   fun lapack_dgehrd = igraph_lapack_dgehrd(a : MatrixT*, ilo : LibC::Int, ihi : LibC::Int, result : MatrixT*) : LibC::Int
-  fun assortativity_nominal = igraph_assortativity_nominal(graph : T*, types : VectorT*, res : RealT*, directed : BoolT) : LibC::Int
-  fun assortativity = igraph_assortativity(graph : T*, types1 : VectorT*, types2 : VectorT*, res : RealT*, directed : BoolT) : LibC::Int
-  fun assortativity_degree = igraph_assortativity_degree(graph : T*, res : RealT*, directed : BoolT) : LibC::Int
-  fun is_separator = igraph_is_separator(graph : T*, candidate : VsT, res : BoolT*) : LibC::Int
-  fun all_minimal_st_separators = igraph_all_minimal_st_separators(graph : T*, separators : VectorPtrT*) : LibC::Int
-  fun is_minimal_separator = igraph_is_minimal_separator(graph : T*, candidate : VsT, res : BoolT*) : LibC::Int
-  fun minimum_size_separators = igraph_minimum_size_separators(graph : T*, separators : VectorPtrT*) : LibC::Int
-  fun cohesive_blocks = igraph_cohesive_blocks(graph : T*, blocks : VectorPtrT*, cohesion : VectorT*, parent : VectorT*, block_tree : T*) : LibC::Int
+  fun assortativity_nominal = igraph_assortativity_nominal(graph : S*, types : VectorT*, res : RealT*, directed : BoolT) : LibC::Int
+  fun assortativity = igraph_assortativity(graph : S*, types1 : VectorT*, types2 : VectorT*, res : RealT*, directed : BoolT) : LibC::Int
+  fun assortativity_degree = igraph_assortativity_degree(graph : S*, res : RealT*, directed : BoolT) : LibC::Int
+  fun is_separator = igraph_is_separator(graph : S*, candidate : VsT, res : BoolT*) : LibC::Int
+  fun all_minimal_st_separators = igraph_all_minimal_st_separators(graph : S*, separators : VectorPtrT*) : LibC::Int
+  fun is_minimal_separator = igraph_is_minimal_separator(graph : S*, candidate : VsT, res : BoolT*) : LibC::Int
+  fun minimum_size_separators = igraph_minimum_size_separators(graph : S*, separators : VectorPtrT*) : LibC::Int
+  fun cohesive_blocks = igraph_cohesive_blocks(graph : S*, blocks : VectorPtrT*, cohesion : VectorT*, parent : VectorT*, block_tree : S*) : LibC::Int
   EigenAuto = 0
   EigenLapack = 1
   EigenArpack = 2
@@ -2998,8 +2997,8 @@ lib IGraph
     EigenCompArpack = 5
   end
   fun eigen_matrix = igraph_eigen_matrix(a : MatrixT*, s_a : SparsematT*, fun : RealT*, RealT*, LibC::Int, Void* -> LibC::Int, n : LibC::Int, extra : Void*, algorithm : EigenAlgorithmT, which : EigenWhichT*, options : ArpackOptionsT*, storage : ArpackStorageT*, values : VectorComplexT*, vectors : MatrixComplexT*) : LibC::Int
-  fun eigen_adjacency = igraph_eigen_adjacency(graph : T*, algorithm : EigenAlgorithmT, which : EigenWhichT*, options : ArpackOptionsT*, storage : ArpackStorageT*, values : VectorT*, vectors : MatrixT*, cmplxvalues : VectorComplexT*, cmplxvectors : MatrixComplexT*) : LibC::Int
-  fun eigen_laplacian = igraph_eigen_laplacian(graph : T*, algorithm : EigenAlgorithmT, which : EigenWhichT*, options : ArpackOptionsT*, storage : ArpackStorageT*, values : VectorT*, vectors : MatrixT*, cmplxvalues : VectorComplexT*, cmplxvectors : MatrixComplexT*) : LibC::Int
+  fun eigen_adjacency = igraph_eigen_adjacency(graph : S*, algorithm : EigenAlgorithmT, which : EigenWhichT*, options : ArpackOptionsT*, storage : ArpackStorageT*, values : VectorT*, vectors : MatrixT*, cmplxvalues : VectorComplexT*, cmplxvectors : MatrixComplexT*) : LibC::Int
+  fun eigen_laplacian = igraph_eigen_laplacian(graph : S*, algorithm : EigenAlgorithmT, which : EigenWhichT*, options : ArpackOptionsT*, storage : ArpackStorageT*, values : VectorT*, vectors : MatrixT*, cmplxvalues : VectorComplexT*, cmplxvectors : MatrixComplexT*) : LibC::Int
   struct HrgT
     left : VectorT
     right : VectorT
@@ -3011,13 +3010,13 @@ lib IGraph
   fun hrg_destroy = igraph_hrg_destroy(hrg : HrgT*)
   fun hrg_size = igraph_hrg_size(hrg : HrgT*) : LibC::Int
   fun hrg_resize = igraph_hrg_resize(hrg : HrgT*, newsize : LibC::Int) : LibC::Int
-  fun hrg_fit = igraph_hrg_fit(graph : T*, hrg : HrgT*, start : BoolT, steps : LibC::Int) : LibC::Int
-  fun hrg_sample = igraph_hrg_sample(graph : T*, sample : T*, samples : VectorPtrT*, hrg : HrgT*, start : BoolT) : LibC::Int
-  fun hrg_game = igraph_hrg_game(graph : T*, hrg : HrgT*) : LibC::Int
-  fun hrg_dendrogram = igraph_hrg_dendrogram(graph : T*, hrg : HrgT*) : LibC::Int
-  fun hrg_consensus = igraph_hrg_consensus(graph : T*, parents : VectorT*, weights : VectorT*, hrg : HrgT*, start : BoolT, num_samples : LibC::Int) : LibC::Int
-  fun hrg_predict = igraph_hrg_predict(graph : T*, edges : VectorT*, prob : VectorT*, hrg : HrgT*, start : BoolT, num_samples : LibC::Int, num_bins : LibC::Int) : LibC::Int
-  fun hrg_create = igraph_hrg_create(hrg : HrgT*, graph : T*, prob : VectorT*) : LibC::Int
+  fun hrg_fit = igraph_hrg_fit(graph : S*, hrg : HrgT*, start : BoolT, steps : LibC::Int) : LibC::Int
+  fun hrg_sample = igraph_hrg_sample(graph : S*, sample : S*, samples : VectorPtrT*, hrg : HrgT*, start : BoolT) : LibC::Int
+  fun hrg_game = igraph_hrg_game(graph : S*, hrg : HrgT*) : LibC::Int
+  fun hrg_dendrogram = igraph_hrg_dendrogram(graph : S*, hrg : HrgT*) : LibC::Int
+  fun hrg_consensus = igraph_hrg_consensus(graph : S*, parents : VectorT*, weights : VectorT*, hrg : HrgT*, start : BoolT, num_samples : LibC::Int) : LibC::Int
+  fun hrg_predict = igraph_hrg_predict(graph : S*, edges : VectorT*, prob : VectorT*, hrg : HrgT*, start : BoolT, num_samples : LibC::Int, num_bins : LibC::Int) : LibC::Int
+  fun hrg_create = igraph_hrg_create(hrg : HrgT*, graph : S*, prob : VectorT*) : LibC::Int
   fun allow_interruption = igraph_allow_interruption(data : Void*) : LibC::Int
   fun set_interruption_handler = igraph_set_interruption_handler(new_handler : Void* -> LibC::Int) : Void* -> LibC::Int
   ScgSymmetric = 1
@@ -3050,22 +3049,22 @@ lib IGraph
     ScgNormCol = 2
   end
   fun scg_norm_eps = igraph_scg_norm_eps(v : MatrixT*, groups : VectorT*, eps : VectorT*, mtype : ScgMatrixT, p : VectorT*, norm : ScgNormT) : LibC::Int
-  fun scg_adjacency = igraph_scg_adjacency(graph : T*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, values : VectorT*, vectors : MatrixT*, groups : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : T*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
-  fun scg_stochastic = igraph_scg_stochastic(graph : T*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, norm : ScgNormT, values : VectorComplexT*, vectors : MatrixComplexT*, groups : VectorT*, p : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : T*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
-  fun scg_laplacian = igraph_scg_laplacian(graph : T*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, norm : ScgNormT, direction : ScgDirectionT, values : VectorComplexT*, vectors : MatrixComplexT*, groups : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : T*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
+  fun scg_adjacency = igraph_scg_adjacency(graph : S*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, values : VectorT*, vectors : MatrixT*, groups : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : S*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
+  fun scg_stochastic = igraph_scg_stochastic(graph : S*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, norm : ScgNormT, values : VectorComplexT*, vectors : MatrixComplexT*, groups : VectorT*, p : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : S*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
+  fun scg_laplacian = igraph_scg_laplacian(graph : S*, matrix : MatrixT*, sparsemat : SparsematT*, ev : VectorT*, nt : IntegerT, nt_vec : VectorT*, algo : ScgAlgorithmT, norm : ScgNormT, direction : ScgDirectionT, values : VectorComplexT*, vectors : MatrixComplexT*, groups : VectorT*, use_arpack : BoolT, maxiter : IntegerT, scg_graph : S*, scg_matrix : MatrixT*, scg_sparsemat : SparsematT*, l : MatrixT*, r : MatrixT*, lsparse : SparsematT*, rsparse : SparsematT*) : LibC::Int
   enum ScgDirectionT
     ScgDirectionDefault = 1
     ScgDirectionLeft = 2
     ScgDirectionRight = 3
   end
-  fun is_matching = igraph_is_matching(graph : T*, types : VectorBoolT*, matching : VectorLongT*, result : BoolT*) : LibC::Int
-  fun is_maximal_matching = igraph_is_maximal_matching(graph : T*, types : VectorBoolT*, matching : VectorLongT*, result : BoolT*) : LibC::Int
-  fun maximum_bipartite_matching = igraph_maximum_bipartite_matching(graph : T*, types : VectorBoolT*, matching_size : IntegerT*, matching_weight : RealT*, matching : VectorLongT*, weights : VectorT*, eps : RealT) : LibC::Int
-  fun maximum_matching = igraph_maximum_matching(graph : T*, matching_size : IntegerT*, matching_weight : RealT*, matching : VectorLongT*, weights : VectorT*) : LibC::Int
-  fun subclique_next = igraph_subclique_next(graph : T*, weights : VectorT*, ids : VectorIntT*, cliques : VectorPtrT*, result : VectorPtrT*, resultweights : VectorPtrT*, resultids : VectorPtrT*, clique_thr : VectorT*, next_thr : VectorT*) : LibC::Int
-  fun graphlets_candidate_basis = igraph_graphlets_candidate_basis(graph : T*, weights : VectorT*, cliques : VectorPtrT*, thresholds : VectorT*) : LibC::Int
-  fun graphlets_project = igraph_graphlets_project(graph : T*, weights : VectorT*, cliques : VectorPtrT*, mu : VectorT*, start_mu : BoolT, niter : LibC::Int) : LibC::Int
-  fun graphlets = igraph_graphlets(graph : T*, weights : VectorT*, cliques : VectorPtrT*, mu : VectorT*, niter : LibC::Int) : LibC::Int
+  fun is_matching = igraph_is_matching(graph : S*, types : VectorBoolT*, matching : VectorLongT*, result : BoolT*) : LibC::Int
+  fun is_maximal_matching = igraph_is_maximal_matching(graph : S*, types : VectorBoolT*, matching : VectorLongT*, result : BoolT*) : LibC::Int
+  fun maximum_bipartite_matching = igraph_maximum_bipartite_matching(graph : S*, types : VectorBoolT*, matching_size : IntegerT*, matching_weight : RealT*, matching : VectorLongT*, weights : VectorT*, eps : RealT) : LibC::Int
+  fun maximum_matching = igraph_maximum_matching(graph : S*, matching_size : IntegerT*, matching_weight : RealT*, matching : VectorLongT*, weights : VectorT*) : LibC::Int
+  fun subclique_next = igraph_subclique_next(graph : S*, weights : VectorT*, ids : VectorIntT*, cliques : VectorPtrT*, result : VectorPtrT*, resultweights : VectorPtrT*, resultids : VectorPtrT*, clique_thr : VectorT*, next_thr : VectorT*) : LibC::Int
+  fun graphlets_candidate_basis = igraph_graphlets_candidate_basis(graph : S*, weights : VectorT*, cliques : VectorPtrT*, thresholds : VectorT*) : LibC::Int
+  fun graphlets_project = igraph_graphlets_project(graph : S*, weights : VectorT*, cliques : VectorPtrT*, mu : VectorT*, start_mu : BoolT, niter : LibC::Int) : LibC::Int
+  fun graphlets = igraph_graphlets(graph : S*, weights : VectorT*, cliques : VectorPtrT*, mu : VectorT*, niter : LibC::Int) : LibC::Int
   struct SirT
     times : VectorT
     no_s : VectorIntT
@@ -3074,10 +3073,9 @@ lib IGraph
   end
   fun sir_init = igraph_sir_init(sir : SirT*) : LibC::Int
   fun sir_destroy = igraph_sir_destroy(sir : SirT*)
-  fun sir = igraph_sir(graph : T*, beta : RealT, gamma : RealT, no_sim : IntegerT, result : VectorPtrT*) : LibC::Int
+  fun sir = igraph_sir(graph : S*, beta : RealT, gamma : RealT, no_sim : IntegerT, result : VectorPtrT*) : LibC::Int
   $rngtype_glibc2 : RngTypeT
   $rngtype_rand : RngTypeT
   $rngtype_mt19937 : RngTypeT
   $cattribute_table : AttributeTableT
 end
-
